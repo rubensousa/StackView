@@ -30,7 +30,7 @@ public class StackAnimator {
 
     public void animatePop(Object item, final View view) {
         ViewCompat.animate(view)
-                .translationX(-view.getWidth())
+                .translationX(-view.getWidth() * 1.1f)
                 .translationZ(ViewCompat.getTranslationZ(view) * 1.2f)
                 .setDuration(ANIMATION_DURATION)
                 .setInterpolator(new AccelerateDecelerateInterpolator())

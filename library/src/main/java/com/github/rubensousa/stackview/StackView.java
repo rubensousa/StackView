@@ -151,7 +151,7 @@ public class StackView extends FrameLayout implements StackEventListener {
             if (i != mPreviousStackPosition) {
                 int stackPosition = i - mCurrentStackPosition;
                 if (stackPosition < 0) {
-                    stackPosition = mCurrentStackPosition - i;
+                    stackPosition = mSize + stackPosition;
                 }
                 ViewCompat.animate(view)
                         .scaleX(1 - stackPosition * 0.05f)
