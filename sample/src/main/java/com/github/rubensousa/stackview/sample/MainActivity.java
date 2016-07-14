@@ -21,7 +21,7 @@ import java.util.ArrayList;
 
 
 public class MainActivity extends AppCompatActivity implements Toolbar.OnMenuItemClickListener,
-        StackAdapter.StackListener<String>,StackView.StackEventListener {
+        StackAdapter.StackListener<String>, StackView.StackEventListener {
 
     private StackView mStackView;
     private StringAdapter mAdapter;
@@ -68,6 +68,12 @@ public class MainActivity extends AppCompatActivity implements Toolbar.OnMenuIte
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         mAdapter.saveState(outState);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mAdapter.setStackListener(null);
     }
 
     @Override
