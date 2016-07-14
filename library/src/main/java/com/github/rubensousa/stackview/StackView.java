@@ -9,12 +9,17 @@ import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.animation.AccelerateInterpolator;
 import android.widget.FrameLayout;
+
+import com.github.rubensousa.stackview.animator.StackAnimator;
+import com.github.rubensousa.stackview.animator.StackDefaultAnimator;
+import com.github.rubensousa.stackview.animator.StackAnimationListener;
 
 import java.util.ArrayList;
 
 
-public class StackView extends FrameLayout implements StackEventListener {
+public class StackView extends FrameLayout implements StackAnimationListener {
 
     private ArrayList<View> mViews;
     private StackAdapter<?> mAdapter;
@@ -48,8 +53,8 @@ public class StackView extends FrameLayout implements StackEventListener {
         mSpacing = a.getDimension(R.styleable.StackView_stackview_spacing, 10f);
         mCyclic = a.getBoolean(R.styleable.StackView_stackview_cyclic, false);
         mLayout = a.getResourceId(R.styleable.StackView_stackview_adapterLayout, 0);
-        mAnimator = new StackAnimator();
-        mAnimator.setStackEventListener(this);
+        mAnimator = new StackDefaultAnimator();
+        mAnimator.setStackAnimationListener(this);
         a.recycle();
         setClipToPadding(false);
         setClipChildren(false);
@@ -65,7 +70,7 @@ public class StackView extends FrameLayout implements StackEventListener {
 
     public void setAnimator(StackAnimator animator) {
         mAnimator = animator;
-        mAnimator.setStackEventListener(this);
+        mAnimator.setStackAnimationListener(this);
     }
 
     public void pop() {
@@ -80,8 +85,8 @@ public class StackView extends FrameLayout implements StackEventListener {
 
         mAnimator.animatePop(currentObj, currentView);
 
-        View nextView = mCurrentStackPosition == mSize - 1 ?
-                mViews.get(0) : mViews.get(mCurrentStackPosition);
+        View nextView = mCurrentStackPosition + 1 > mSize - 1 ?
+                mViews.get(mSize - mCurrentStackPosition) : mViews.get(mCurrentStackPosition + 1);
 
         mAnimator.animateReveal(mAdapter.getCurrentItem(), nextView);
 
@@ -95,7 +100,6 @@ public class StackView extends FrameLayout implements StackEventListener {
         }
 
         mAdapter = adapter;
-
         mObserver = new DataSetObserver() {
             @Override
             public void onChanged() {
@@ -164,24 +168,18 @@ public class StackView extends FrameLayout implements StackEventListener {
     }
 
     @Override
-    public void onPop(int position) {
-
-    }
-
-    @Override
-    public void onStackEmpty(int lastPosition) {
-
-    }
-
-    @Override
-    public void onExitFinished() {
-        View view = mViews.get(mPreviousStackPosition);
+    public void onExitFinished(View view) {
 
         // Reset view properties
+        ViewCompat.setRotation(view, 0f);
+        ViewCompat.setRotationY(view, 0f);
+        ViewCompat.setRotationX(view, 0f);
+        ViewCompat.setAlpha(view, 1f);
+        ViewCompat.setScaleY(view, 1f);
         ViewCompat.setScaleX(view, 1 - (mSize - 1) * 0.05f);
-        ViewCompat.setTranslationZ(view, 0);
+        ViewCompat.setTranslationZ(view, 0f);
         ViewCompat.setTranslationY(view, (mSize - 2) * mSpacing);
-        ViewCompat.setTranslationX(view, 0);
+        ViewCompat.setTranslationX(view, 0f);
 
         if (mAdapter.getCount() < mSize) {
             view.setVisibility(View.INVISIBLE);
@@ -194,13 +192,29 @@ public class StackView extends FrameLayout implements StackEventListener {
         // Animate reveal on bottom
         ViewCompat.animate(view)
                 .translationY((mSize - 1) * mSpacing)
-                .setDuration(StackAnimator.ANIMATION_DURATION);
+                .setDuration(StackAnimator.ANIMATION_DURATION / 2)
+                .setInterpolator(new AccelerateInterpolator());
 
         mPopping = false;
     }
 
     @Override
-    public void onEnterFinished() {
+    public void onEnterFinished(View view) {
+        // Reset view properties
+        ViewCompat.setRotation(view, 0f);
+        ViewCompat.setRotationY(view, 0f);
+        ViewCompat.setRotationX(view, 0f);
+        ViewCompat.setAlpha(view, 1f);
+        ViewCompat.setScaleY(view, 1f);
+        ViewCompat.setScaleX(view, 1f);
+        ViewCompat.setTranslationZ(view, (mSize - 1) * 10f);
+        ViewCompat.setTranslationY(view, 0f);
+        ViewCompat.setTranslationX(view, 0f);
+    }
 
+    public interface StackEventListener {
+        void onPop(int position);
+
+        void onStackEmpty(int lastPosition);
     }
 }

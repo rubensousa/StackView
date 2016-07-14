@@ -4,13 +4,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 
-import com.github.rubensousa.stackview.StackEventListener;
 import com.github.rubensousa.stackview.StackView;
 
 import java.util.ArrayList;
 
 
-public class MainActivity extends AppCompatActivity implements StackEventListener {
+public class MainActivity extends AppCompatActivity implements StackView.StackEventListener {
 
     private StackView mStackView;
     private StringAdapter mAdapter;
@@ -44,6 +43,7 @@ public class MainActivity extends AppCompatActivity implements StackEventListene
 
         mStackView.setStackEventListener(this);
         mStackView.setAdapter(mAdapter);
+        //mStackView.setAnimator(new StackFlipAnimator());
     }
 
     @Override
@@ -62,13 +62,4 @@ public class MainActivity extends AppCompatActivity implements StackEventListene
 
     }
 
-    @Override
-    public void onExitFinished() {
-
-    }
-
-    @Override
-    public void onEnterFinished() {
-
-    }
 }
