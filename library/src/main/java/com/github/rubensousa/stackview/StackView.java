@@ -29,6 +29,7 @@ public class StackView extends FrameLayout implements StackAnimationListener {
     private StackAnimator mAnimator;
     private boolean mCyclic;
     private float mSpacing;
+    private int mCurrentSize;
     private int mSize;
     private int mItemsShowing;
     private int mCount;
@@ -199,13 +200,17 @@ public class StackView extends FrameLayout implements StackAnimationListener {
         mPopping = false;
 
         if (mAdapter.getCount() - 1 < mSize) {
-            mItemsShowing--;
-            mAdapter.pop();
-            view.setVisibility(View.INVISIBLE);
+            if (!mCyclic) {
+                mItemsShowing--;
+                mAdapter.pop();
+                view.setVisibility(View.INVISIBLE);
+            }
             return;
         }
 
-        mAdapter.pop();
+        if (!mCyclic) {
+            mAdapter.pop();
+        }
 
         // Get a new view for the next position
         if (mAdapter.getCount() >= mSize) {
