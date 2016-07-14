@@ -21,8 +21,10 @@ import java.util.ArrayList;
 
 public class StackView extends FrameLayout implements StackAnimationListener {
 
+    public static final int ANIMATION_DURATION = 500;
+
     private ArrayList<View> mViews;
-    private StackAdapter<?> mAdapter;
+    private StackAdapter mAdapter;
     private StackEventListener mEventListener;
     private StackAnimator mAnimator;
     private boolean mCyclic;
@@ -32,6 +34,7 @@ public class StackView extends FrameLayout implements StackAnimationListener {
     private int mCount;
     private DataSetObserver mObserver;
     private boolean mPopping;
+    private boolean mHardwareAccelerationEnabled;
 
     @LayoutRes
     private int mLayout;
@@ -47,7 +50,7 @@ public class StackView extends FrameLayout implements StackAnimationListener {
     public StackView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         mViews = new ArrayList<>();
-
+        mHardwareAccelerationEnabled = true;
         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.StackView, 0, 0);
         mSize = a.getInteger(R.styleable.StackView_stackview_size, 4);
         mSpacing = a.getDimension(R.styleable.StackView_stackview_spacing, 10f);
@@ -62,6 +65,11 @@ public class StackView extends FrameLayout implements StackAnimationListener {
         if (isInEditMode()) {
             addViews();
         }
+
+    }
+
+    public void enableHardwareAcceleration(boolean enable) {
+        mHardwareAccelerationEnabled = enable;
     }
 
     public void setStackEventListener(StackEventListener eventListener) {
@@ -144,6 +152,9 @@ public class StackView extends FrameLayout implements StackAnimationListener {
         }
         for (int i = mSize - 1; i >= 0; i--) {
             View view = LayoutInflater.from(getContext()).inflate(mLayout, this, false);
+            if (mHardwareAccelerationEnabled) {
+                view.setLayerType(View.LAYER_TYPE_HARDWARE, null);
+            }
             if (mAdapter != null && i < mAdapter.getCount()) {
                 mItemsShowing++;
                 view = mAdapter.getView(i, view, this);
@@ -204,7 +215,7 @@ public class StackView extends FrameLayout implements StackAnimationListener {
         // Animate reveal on bottom
         ViewCompat.animate(view)
                 .translationY((mSize - 1) * mSpacing)
-                .setDuration(StackAnimator.ANIMATION_DURATION / 2)
+                .setDuration(ANIMATION_DURATION / 2)
                 .setInterpolator(new AccelerateInterpolator());
     }
 
@@ -227,12 +238,10 @@ public class StackView extends FrameLayout implements StackAnimationListener {
                 .scaleX(1 - stackPosition * 0.05f < 0f ? 0.05f : 1 - stackPosition * 0.05f)
                 .translationZ((mSize - 1 - stackPosition) * 10)
                 .translationY(stackPosition * mSpacing)
-                .setDuration(StackAnimator.ANIMATION_DURATION);
+                .setDuration(ANIMATION_DURATION);
     }
 
     public interface StackEventListener {
-        void onPop(int position);
-
         void onStackEmpty(int lastPosition);
     }
 }

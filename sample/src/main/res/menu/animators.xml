@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/defaultAnim"
+        app:showAsAction="never"
+        android:title="Default" />
+
+    <item
+        android:id="@+id/flip"
+        app:showAsAction="never"
+        android:title="Flip" />
+
+    <item
+        android:id="@+id/flipSlide"
+        app:showAsAction="never"
+        android:title="Flip and slide" />
+
+    <item
+        android:id="@+id/slide"
+        app:showAsAction="never"
+        android:title="Slide" />
+
+    <item
+        android:id="@+id/fade"
+        app:showAsAction="never"
+        android:title="Slide and fade" />
+
+    <item
+        android:id="@+id/shrink"
+        app:showAsAction="never"
+        android:title="Slide and shrink" />
+
+</menu>

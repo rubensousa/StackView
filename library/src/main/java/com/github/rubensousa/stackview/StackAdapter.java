@@ -11,9 +11,14 @@ public abstract class StackAdapter<T> extends BaseAdapter {
     public static final String DATA_STATE = "state";
 
     private ArrayList<T> mData;
+    private StackListener<T> mListener;
 
     public StackAdapter() {
         mData = new ArrayList<>();
+    }
+
+    public void setStackListener(StackListener<T> listener) {
+        mListener = listener;
     }
 
     public abstract void saveState(Bundle outState);
@@ -37,6 +42,9 @@ public abstract class StackAdapter<T> extends BaseAdapter {
     public T pop() {
         T data = mData.remove(0);
         notifyDataSetChanged();
+        if (mListener != null) {
+            mListener.onPop(data);
+        }
         return data;
     }
 
@@ -64,4 +72,7 @@ public abstract class StackAdapter<T> extends BaseAdapter {
         return i;
     }
 
+    public interface StackListener<T> {
+        void onPop(T item);
+    }
 }

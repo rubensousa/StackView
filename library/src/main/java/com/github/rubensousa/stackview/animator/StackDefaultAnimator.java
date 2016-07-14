@@ -3,7 +3,7 @@ package com.github.rubensousa.stackview.animator;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewPropertyAnimatorListenerAdapter;
 import android.view.View;
-import android.view.animation.AccelerateDecelerateInterpolator;
+import android.view.animation.AccelerateInterpolator;
 import android.view.animation.OvershootInterpolator;
 
 public class StackDefaultAnimator extends StackAnimator {
@@ -30,9 +30,9 @@ public class StackDefaultAnimator extends StackAnimator {
                 .translationX(-view.getWidth() * 1.1f)
                 .translationY(view.getHeight() * 0.1f)
                 .translationZ(ViewCompat.getTranslationZ(view) * 1.2f)
-                .setDuration(ANIMATION_DURATION)
+                .setDuration(getAnimationDuration())
                 .rotation(-25)
-                .setInterpolator(new AccelerateDecelerateInterpolator())
+                .setInterpolator(new AccelerateInterpolator())
                 .setListener(new ViewPropertyAnimatorListenerAdapter() {
                     @Override
                     public void onAnimationEnd(View view) {
