@@ -33,6 +33,7 @@ import com.github.rubensousa.stackview.animator.StackDefaultAnimator;
 import com.github.rubensousa.stackview.animator.StackAnimationListener;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 
 public class StackView extends FrameLayout implements StackAnimationListener {
@@ -46,10 +47,12 @@ public class StackView extends FrameLayout implements StackAnimationListener {
     private boolean mCyclic;
     private float mHorizontalSpacing;
     private float mVerticalSpacing;
+    private int mItemMaxRotation;
     private int mCurrentSize;
     private int mSize;
     private int mItemsShowing;
     private int mCount;
+    private Random mRandom;
     private DataSetObserver mObserver;
     private boolean mPopping;
     private boolean mHardwareAccelerationEnabled;
@@ -68,11 +71,13 @@ public class StackView extends FrameLayout implements StackAnimationListener {
     public StackView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         mViews = new ArrayList<>();
+        mRandom = new Random();
         mHardwareAccelerationEnabled = true;
         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.StackView, 0, 0);
         mSize = a.getInteger(R.styleable.StackView_stackview_size, 4);
         mHorizontalSpacing = a.getDimension(R.styleable.StackView_stackview_horizontalSpacing, 0f);
         mVerticalSpacing = a.getDimension(R.styleable.StackView_stackview_verticalSpacing, 10f);
+        mItemMaxRotation = a.getInteger(R.styleable.StackView_stackview_rotationRandomMagnitude, 0);
         mCyclic = a.getBoolean(R.styleable.StackView_stackview_cyclic, false);
         mLayout = a.getResourceId(R.styleable.StackView_stackview_adapterLayout, 0);
         mAnimator = new StackDefaultAnimator();
@@ -145,6 +150,7 @@ public class StackView extends FrameLayout implements StackAnimationListener {
                         mItemsShowing++;
                         View view = mAdapter.getView(i, mViews.get(stackPosition), StackView.this);
                         view.setVisibility(View.VISIBLE);
+                        view.setRotation(setupRotation());
                         setupView(view, stackPosition);
                     }
 
@@ -187,6 +193,9 @@ public class StackView extends FrameLayout implements StackAnimationListener {
             mViews.set(i, view);
             addView(view);
             setupView(view, i);
+
+            // Set a random rotation
+            view.setRotation(setupRotation());
         }
     }
 
@@ -199,6 +208,9 @@ public class StackView extends FrameLayout implements StackAnimationListener {
             view = mViews.get(i);
             if (view.getVisibility() == View.VISIBLE) {
                 setupView(view, i);
+            }else{
+                // Set a random rotation
+                view.setRotation(setupRotation());
             }
         }
     }
@@ -240,6 +252,7 @@ public class StackView extends FrameLayout implements StackAnimationListener {
         // Animate reveal on bottom
         ViewCompat.animate(view)
                 .translationY((mSize - 1) * mVerticalSpacing)
+                .rotation(setupRotation())
                 .setDuration(ANIMATION_DURATION / 2)
                 .setInterpolator(new AccelerateInterpolator());
     }
@@ -247,7 +260,9 @@ public class StackView extends FrameLayout implements StackAnimationListener {
     @Override
     public void onEnterFinished(View view) {
         // Reset view properties
-        ViewCompat.setRotation(view, 0f);
+        if (mItemMaxRotation <= 0) {
+            ViewCompat.setRotation(view, 0f);
+        }
         ViewCompat.setRotationY(view, 0f);
         ViewCompat.setRotationX(view, 0f);
         ViewCompat.setAlpha(view, 1f);
@@ -258,7 +273,18 @@ public class StackView extends FrameLayout implements StackAnimationListener {
         ViewCompat.setTranslationX(view, 0f);
     }
 
-    public void setupView(View view, int stackPosition) {
+    private int setupRotation() {
+        if (mItemMaxRotation == 0) {
+            return 0;
+        }
+
+        boolean leftRotation = mRandom.nextInt(2) == 0;
+
+        return leftRotation ? mRandom.nextInt(mItemMaxRotation) * (-1)
+                : mRandom.nextInt(mItemMaxRotation);
+    }
+
+    private void setupView(View view, int stackPosition) {
         if (!isInEditMode()) {
             ViewCompat.animate(view)
                     .scaleX(1 - stackPosition * 0.05f < 0f ? 0.05f : 1 - stackPosition * 0.05f)

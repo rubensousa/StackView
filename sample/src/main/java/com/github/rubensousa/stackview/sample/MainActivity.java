@@ -78,7 +78,7 @@ public class MainActivity extends AppCompatActivity implements Toolbar.OnMenuIte
 
     @Override
     public void onPop(String data) {
-        Snackbar.make(mStackView, data, Snackbar.LENGTH_SHORT).show();
+       // Snackbar.make(mStackView, data, Snackbar.LENGTH_SHORT).show();
     }
 
     @Override
