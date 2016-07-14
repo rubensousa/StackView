@@ -13,7 +13,7 @@ public class StackDefaultAnimator extends StackAnimator {
         ViewCompat.animate(view)
                 .scaleX(1.0f)
                 .scaleY(1.0f)
-                .setInterpolator(new OvershootInterpolator())
+                .setInterpolator(new OvershootInterpolator(2f))
                 .setListener(new ViewPropertyAnimatorListenerAdapter() {
                     @Override
                     public void onAnimationEnd(View view) {
@@ -28,6 +28,7 @@ public class StackDefaultAnimator extends StackAnimator {
     public void animatePop(Object item, View view) {
         ViewCompat.animate(view)
                 .translationX(-view.getWidth() * 1.1f)
+                .translationY(view.getHeight() * 0.1f)
                 .translationZ(ViewCompat.getTranslationZ(view) * 1.2f)
                 .setDuration(ANIMATION_DURATION)
                 .rotation(-25)

@@ -86,7 +86,7 @@ public class StackView extends FrameLayout implements StackAnimationListener {
         mAnimator.animatePop(currentObj, currentView);
 
         View nextView = mCurrentStackPosition + 1 > mSize - 1 ?
-                mViews.get(mSize - mCurrentStackPosition) : mViews.get(mCurrentStackPosition + 1);
+                mViews.get(0) : mViews.get(mCurrentStackPosition + 1);
 
         mAnimator.animateReveal(mAdapter.getCurrentItem(), nextView);
 
