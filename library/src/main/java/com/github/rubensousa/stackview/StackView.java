@@ -28,6 +28,7 @@ public class StackView extends FrameLayout implements StackAnimationListener {
     private boolean mCyclic;
     private float mSpacing;
     private int mSize;
+    private int mItemsShowing;
     private int mCount;
     private int mCurrentStackPosition;
     private int mPreviousStackPosition;
@@ -82,7 +83,7 @@ public class StackView extends FrameLayout implements StackAnimationListener {
         mPopping = true;
         mPreviousStackPosition = mCurrentStackPosition;
         View currentView = mViews.get(mCurrentStackPosition);
-        Object currentObj = mAdapter.pop();
+        Object currentObj = mAdapter.getCurrentItem();
 
         mAnimator.animatePop(currentObj, currentView);
 
@@ -110,6 +111,26 @@ public class StackView extends FrameLayout implements StackAnimationListener {
             @Override
             public void onChanged() {
                 super.onChanged();
+
+                if (mItemsShowing < mSize && !mAdapter.isEmpty()
+                        && mAdapter.getCount() > mItemsShowing) {
+                    int itemsToAdd = mAdapter.getCount() >= mSize - mItemsShowing
+                            ? mSize - mItemsShowing : mAdapter.getCount();
+
+                    for (int i = 0; i < itemsToAdd; i++) {
+                        mItemsShowing++;
+                        int stackPosition = mCurrentStackPosition + i;
+
+                        if (stackPosition >= mSize) {
+                            stackPosition = mSize - i - 1;
+                        }
+
+                        View view = mAdapter.getView(i, mViews.get(stackPosition), StackView.this);
+                        view.setVisibility(View.VISIBLE);
+                        setupView(view, stackPosition);
+                    }
+
+                }
             }
 
             @Override
@@ -132,18 +153,17 @@ public class StackView extends FrameLayout implements StackAnimationListener {
         }
         for (int i = mSize - 1; i >= 0; i--) {
             View view = LayoutInflater.from(getContext()).inflate(mLayout, this, false);
-            if (mAdapter != null) {
+            if (mAdapter != null && i < mAdapter.getCount()) {
+                mItemsShowing++;
                 view = mAdapter.getView(i, view, this);
+            } else {
+                // If there's no adapter set or the adapter has less items and the current index,
+                // then hide the view
+                view.setVisibility(View.INVISIBLE);
             }
             mViews.set(i, view);
             addView(view);
-            if (1 - i * 0.05f < 0f) {
-                ViewCompat.setScaleX(view, 0.05f);
-            } else {
-                ViewCompat.setScaleX(view, (1 - i * 0.05f));
-            }
-            ViewCompat.setTranslationZ(view, (mSize - 1 - i) * 10);
-            ViewCompat.setTranslationY(view, i * mSpacing);
+            setupView(view, i);
         }
     }
 
@@ -163,11 +183,8 @@ public class StackView extends FrameLayout implements StackAnimationListener {
                 if (stackPosition < 0) {
                     stackPosition = mSize + stackPosition;
                 }
-                ViewCompat.animate(view)
-                        .scaleX(1 - stackPosition * 0.05f)
-                        .translationZ((mSize - 1 - stackPosition) * 10)
-                        .setDuration(StackAnimator.ANIMATION_DURATION)
-                        .translationY(stackPosition * mSpacing);
+
+                setupView(view, stackPosition);
             }
         }
 
@@ -190,20 +207,24 @@ public class StackView extends FrameLayout implements StackAnimationListener {
         mPopping = false;
 
         if (mAdapter.getCount() < mSize) {
+            mItemsShowing--;
+            mAdapter.pop();
             view.setVisibility(View.INVISIBLE);
             return;
         }
 
+        mAdapter.pop();
+
         // Get a new view for the next position
-        view = mAdapter.getView(mSize - 1, view, this);
+        if (mAdapter.getCount() >= mSize) {
+            view = mAdapter.getView(mSize - 1, view, this);
+        }
 
         // Animate reveal on bottom
         ViewCompat.animate(view)
                 .translationY((mSize - 1) * mSpacing)
                 .setDuration(StackAnimator.ANIMATION_DURATION / 2)
                 .setInterpolator(new AccelerateInterpolator());
-
-
     }
 
     @Override
@@ -218,6 +239,14 @@ public class StackView extends FrameLayout implements StackAnimationListener {
         ViewCompat.setTranslationZ(view, (mSize - 1) * 10f);
         ViewCompat.setTranslationY(view, 0f);
         ViewCompat.setTranslationX(view, 0f);
+    }
+
+    public void setupView(View view, int stackPosition) {
+        ViewCompat.animate(view)
+                .scaleX(1 - stackPosition * 0.05f < 0f ? 0.05f : 1 - stackPosition * 0.05f)
+                .translationZ((mSize - 1 - stackPosition) * 10)
+                .translationY(stackPosition * mSpacing)
+                .setDuration(StackAnimator.ANIMATION_DURATION);
     }
 
     public interface StackEventListener {

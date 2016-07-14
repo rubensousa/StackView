@@ -20,10 +20,18 @@ public class MainActivity extends AppCompatActivity implements StackView.StackEv
         setContentView(R.layout.activity_main);
 
         mStackView = (StackView) findViewById(R.id.stackView);
+
         findViewById(R.id.fab).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 mStackView.pop();
+            }
+        });
+
+        findViewById(R.id.fabAdd).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mAdapter.push(getData());
             }
         });
 
@@ -32,13 +40,7 @@ public class MainActivity extends AppCompatActivity implements StackView.StackEv
         if (savedInstanceState != null) {
             mAdapter.restoreState(savedInstanceState);
         } else {
-            ArrayList<String> data = new ArrayList<>();
-            for (int i = 0; i < 2; i++) {
-                data.add("One");
-                data.add("Two");
-                data.add("Three");
-            }
-            mAdapter.push(data);
+            mAdapter.push(getData());
         }
 
         mStackView.setStackEventListener(this);
@@ -60,6 +62,17 @@ public class MainActivity extends AppCompatActivity implements StackView.StackEv
     @Override
     public void onStackEmpty(int lastPosition) {
 
+    }
+
+    private ArrayList<String> getData() {
+        ArrayList<String> data = new ArrayList<>();
+        for (int i = 0; i < 1; i++) {
+            data.add("One");
+            data.add("Two");
+            data.add("Three");
+        }
+
+        return data;
     }
 
 }
