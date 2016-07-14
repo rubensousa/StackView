@@ -27,13 +27,18 @@
         android:id="@+id/stackView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+        android:layout_marginStart="@dimen/activity_horizontal_margin"
+        android:layout_marginEnd="@dimen/activity_horizontal_margin"
+        android:layout_marginRight="@dimen/activity_horizontal_margin"
         android:layout_marginBottom="72dp"
         android:padding="@dimen/activity_horizontal_margin"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         app:stackview_adapterLayout="@layout/adapter"
         app:stackview_cyclic="false"
         app:stackview_size="4"
-        app:stackview_spacing="4dp" />
+        app:stackview_horizontalSpacing="14dp"
+        app:stackview_spacing="-4dp" />
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fabAdd"

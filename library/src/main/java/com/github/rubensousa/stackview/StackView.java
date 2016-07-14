@@ -44,7 +44,8 @@ public class StackView extends FrameLayout implements StackAnimationListener {
     private StackEventListener mEventListener;
     private StackAnimator mAnimator;
     private boolean mCyclic;
-    private float mSpacing;
+    private float mHorizontalSpacing;
+    private float mVerticalSpacing;
     private int mCurrentSize;
     private int mSize;
     private int mItemsShowing;
@@ -70,7 +71,8 @@ public class StackView extends FrameLayout implements StackAnimationListener {
         mHardwareAccelerationEnabled = true;
         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.StackView, 0, 0);
         mSize = a.getInteger(R.styleable.StackView_stackview_size, 4);
-        mSpacing = a.getDimension(R.styleable.StackView_stackview_spacing, 10f);
+        mHorizontalSpacing = a.getDimension(R.styleable.StackView_stackview_horizontalSpacing, 0f);
+        mVerticalSpacing = a.getDimension(R.styleable.StackView_stackview_spacing, 10f);
         mCyclic = a.getBoolean(R.styleable.StackView_stackview_cyclic, false);
         mLayout = a.getResourceId(R.styleable.StackView_stackview_adapterLayout, 0);
         mAnimator = new StackDefaultAnimator();
@@ -212,7 +214,7 @@ public class StackView extends FrameLayout implements StackAnimationListener {
         ViewCompat.setScaleY(view, 1f);
         ViewCompat.setScaleX(view, 1 - (mSize - 1) * 0.05f);
         ViewCompat.setTranslationZ(view, 0f);
-        ViewCompat.setTranslationY(view, (mSize - 2) * mSpacing);
+        ViewCompat.setTranslationY(view, (mSize - 2) * mVerticalSpacing);
         ViewCompat.setTranslationX(view, 0f);
 
         mPopping = false;
@@ -237,7 +239,7 @@ public class StackView extends FrameLayout implements StackAnimationListener {
 
         // Animate reveal on bottom
         ViewCompat.animate(view)
-                .translationY((mSize - 1) * mSpacing)
+                .translationY((mSize - 1) * mVerticalSpacing)
                 .setDuration(ANIMATION_DURATION / 2)
                 .setInterpolator(new AccelerateInterpolator());
     }
@@ -260,14 +262,16 @@ public class StackView extends FrameLayout implements StackAnimationListener {
         if (!isInEditMode()) {
             ViewCompat.animate(view)
                     .scaleX(1 - stackPosition * 0.05f < 0f ? 0.05f : 1 - stackPosition * 0.05f)
+                    .translationX(stackPosition * mHorizontalSpacing)
                     .translationZ((mSize - 1 - stackPosition) * 10)
-                    .translationY(stackPosition * mSpacing)
+                    .translationY(stackPosition * mVerticalSpacing)
                     .setDuration(ANIMATION_DURATION);
         } else {
             ViewCompat.setScaleX(view, 1 - stackPosition * 0.05f < 0f
                     ? 0.05f : 1 - stackPosition * 0.05f);
+            ViewCompat.setTranslationX(view, stackPosition * mHorizontalSpacing);
             ViewCompat.setTranslationZ(view, (mSize - 1 - stackPosition) * 10);
-            ViewCompat.setTranslationY(view, stackPosition * mSpacing);
+            ViewCompat.setTranslationY(view, stackPosition * mVerticalSpacing);
         }
     }
 
