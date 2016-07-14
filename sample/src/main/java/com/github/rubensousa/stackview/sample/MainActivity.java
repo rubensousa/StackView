@@ -33,7 +33,7 @@ public class MainActivity extends AppCompatActivity implements StackView.StackEv
             mAdapter.restoreState(savedInstanceState);
         } else {
             ArrayList<String> data = new ArrayList<>();
-            for (int i = 0; i < 20; i++) {
+            for (int i = 0; i < 2; i++) {
                 data.add("One");
                 data.add("Two");
                 data.add("Three");

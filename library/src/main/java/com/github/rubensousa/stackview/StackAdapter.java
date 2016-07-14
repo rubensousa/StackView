@@ -45,6 +45,11 @@ public abstract class StackAdapter<T> extends BaseAdapter {
     }
 
     @Override
+    public boolean isEmpty() {
+        return mData.isEmpty();
+    }
+
+    @Override
     public int getCount() {
         return mData.size();
     }
