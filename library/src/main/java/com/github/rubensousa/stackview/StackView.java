@@ -178,7 +178,9 @@ public class StackView extends FrameLayout implements StackAnimationListener {
             } else {
                 // If there's no adapter set or the adapter has less items and the current index,
                 // then hide the view
-                view.setVisibility(View.INVISIBLE);
+                if (!isInEditMode()) {
+                    view.setVisibility(View.INVISIBLE);
+                }
             }
             mViews.set(i, view);
             addView(view);
@@ -255,11 +257,18 @@ public class StackView extends FrameLayout implements StackAnimationListener {
     }
 
     public void setupView(View view, int stackPosition) {
-        ViewCompat.animate(view)
-                .scaleX(1 - stackPosition * 0.05f < 0f ? 0.05f : 1 - stackPosition * 0.05f)
-                .translationZ((mSize - 1 - stackPosition) * 10)
-                .translationY(stackPosition * mSpacing)
-                .setDuration(ANIMATION_DURATION);
+        if (!isInEditMode()) {
+            ViewCompat.animate(view)
+                    .scaleX(1 - stackPosition * 0.05f < 0f ? 0.05f : 1 - stackPosition * 0.05f)
+                    .translationZ((mSize - 1 - stackPosition) * 10)
+                    .translationY(stackPosition * mSpacing)
+                    .setDuration(ANIMATION_DURATION);
+        } else {
+            ViewCompat.setScaleX(view, 1 - stackPosition * 0.05f < 0f
+                    ? 0.05f : 1 - stackPosition * 0.05f);
+            ViewCompat.setTranslationZ(view, (mSize - 1 - stackPosition) * 10);
+            ViewCompat.setTranslationY(view, stackPosition * mSpacing);
+        }
     }
 
     public interface StackEventListener {
