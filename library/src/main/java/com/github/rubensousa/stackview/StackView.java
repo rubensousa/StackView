@@ -72,7 +72,7 @@ public class StackView extends FrameLayout implements StackAnimationListener {
         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.StackView, 0, 0);
         mSize = a.getInteger(R.styleable.StackView_stackview_size, 4);
         mHorizontalSpacing = a.getDimension(R.styleable.StackView_stackview_horizontalSpacing, 0f);
-        mVerticalSpacing = a.getDimension(R.styleable.StackView_stackview_spacing, 10f);
+        mVerticalSpacing = a.getDimension(R.styleable.StackView_stackview_verticalSpacing, 10f);
         mCyclic = a.getBoolean(R.styleable.StackView_stackview_cyclic, false);
         mLayout = a.getResourceId(R.styleable.StackView_stackview_adapterLayout, 0);
         mAnimator = new StackDefaultAnimator();

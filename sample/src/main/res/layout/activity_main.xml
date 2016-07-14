@@ -38,7 +38,7 @@
         app:stackview_cyclic="false"
         app:stackview_size="4"
         app:stackview_horizontalSpacing="14dp"
-        app:stackview_spacing="-4dp" />
+        app:stackview_verticalSpacing="-4dp" />
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fabAdd"
