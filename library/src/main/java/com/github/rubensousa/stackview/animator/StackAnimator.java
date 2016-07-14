@@ -42,6 +42,10 @@ public abstract class StackAnimator {
         return mMoveDirection;
     }
 
+    public void setMoveDirection(int moveDirection){
+        mMoveDirection = moveDirection;
+    }
+
     public StackAnimationListener getAnimationListener() {
         return mEventListener;
     }
