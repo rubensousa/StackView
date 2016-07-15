@@ -94,6 +94,15 @@ public class StackView extends FrameLayout implements StackAnimationListener {
 
     public void enableHardwareAcceleration(boolean enable) {
         mHardwareAccelerationEnabled = enable;
+        for (View view : mViews) {
+            if(view != null) {
+                if (mHardwareAccelerationEnabled) {
+                    view.setLayerType(LAYER_TYPE_HARDWARE, null);
+                } else {
+                    view.setLayerType(LAYER_TYPE_SOFTWARE, null);
+                }
+            }
+        }
     }
 
     public void setStackEventListener(StackEventListener eventListener) {
@@ -208,7 +217,7 @@ public class StackView extends FrameLayout implements StackAnimationListener {
             view = mViews.get(i);
             if (view.getVisibility() == View.VISIBLE) {
                 setupView(view, i);
-            }else{
+            } else {
                 // Set a random rotation
                 view.setRotation(setupRotation());
             }
