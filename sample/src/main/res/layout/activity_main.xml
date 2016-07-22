@@ -35,10 +35,10 @@
         android:padding="@dimen/activity_horizontal_margin"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         app:stackview_adapterLayout="@layout/adapter"
+        app:stackview_horizontalScalingFactor="0.01"
         app:stackview_cyclic="false"
-        app:stackview_rotationRandomMagnitude="5"
-        app:stackview_size="4"
-        app:stackview_verticalSpacing="5dp" />
+        app:stackview_size="6"
+        app:stackview_verticalSpacing="2dp" />
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fabAdd"

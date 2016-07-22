@@ -2,6 +2,8 @@
 <resources>
     <declare-styleable name="StackView">
         <attr name="stackview_rotationRandomMagnitude" format="integer" />
+        <!-- Must be greater than 0 and less than 1 -->
+        <attr name="stackview_horizontalScalingFactor" format="float"/>
         <attr name="stackview_horizontalSpacing" format="dimension" />
         <attr name="stackview_verticalSpacing" format="dimension" />
         <attr name="stackview_cyclic" format="boolean" />
