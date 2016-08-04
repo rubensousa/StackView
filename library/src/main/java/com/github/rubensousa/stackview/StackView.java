@@ -51,9 +51,8 @@ public class StackView extends FrameLayout implements StackAnimationListener {
     private float mVerticalSpacing;
     private int mItemMaxRotation;
     private float mScaleXFactor;
-    private int mCurrentSize;
     private int mSize;
-    private int mItemsShowing;
+    private int mCurrentSize;
     private int mCount;
     private Random mRandom;
     private DataSetObserver mObserver;
@@ -189,20 +188,20 @@ public class StackView extends FrameLayout implements StackAnimationListener {
             public void onChanged() {
                 super.onChanged();
 
-                if (mItemsShowing < mSize && !mAdapter.isEmpty()
-                        && mAdapter.getCount() > mItemsShowing) {
-                    int itemsToAdd = mAdapter.getCount() >= mSize - mItemsShowing
-                            ? mSize - mItemsShowing : mAdapter.getCount();
+                int newSize = mAdapter.getCount() > mSize ? mSize : mAdapter.getCount();
 
+                if (mCurrentSize < newSize) {
+                    int itemsToAdd = newSize - mCurrentSize;
                     for (int i = 0; i < itemsToAdd; i++) {
-                        int stackPosition = mItemsShowing;
-                        View view = mAdapter.getView(i, mViews.get(stackPosition), StackView.this);
+                        int stackPosition = mCurrentSize;
+                        View view = mAdapter.getView(stackPosition, mViews.get(stackPosition),
+                                StackView.this);
                         view.setVisibility(View.VISIBLE);
-                        view.setRotation(nextRotation());
-                        setupView(view, stackPosition);
-                        mItemsShowing++;
+                        ViewCompat.setTranslationY(view, 0f);
+                        ViewCompat.setTranslationZ(view, (mSize - 1 - mCurrentSize) * 10f);
+                        mAnimator.animateAdd(view);
+                        mCurrentSize++;
                     }
-
                 }
             }
 
@@ -230,7 +229,7 @@ public class StackView extends FrameLayout implements StackAnimationListener {
         ViewCompat.setScaleY(view, 1f);
         ViewCompat.setScaleX(view, 1 - (mSize - 1) * mScaleXFactor);
         ViewCompat.setTranslationZ(view, 0f);
-        ViewCompat.setTranslationY(view, (mSize - 2) * mVerticalSpacing);
+        ViewCompat.setTranslationY(view, (mSize - 1) * mVerticalSpacing);
         ViewCompat.setTranslationX(view, 0f);
 
         mPopping = false;
@@ -238,20 +237,21 @@ public class StackView extends FrameLayout implements StackAnimationListener {
 
         // If cyclic looping is enabled, we push the data again to the stack
         if (mCyclic) {
+            mCurrentSize--;
+            view.setVisibility(View.INVISIBLE);
             //noinspection unchecked
             mAdapter.push(data);
         } else if (mAdapter.getCount() - 1 < mSize) {
-            mItemsShowing--;
+            mCurrentSize--;
             view.setVisibility(View.INVISIBLE);
-            return;
-        }
+        } else {
+            // Get a new view for the next position
+            if (mAdapter.getCount() >= mSize) {
+                view = mAdapter.getView(mSize - 1, view, this);
 
-        // Get a new view for the next position
-        if (mAdapter.getCount() >= mSize) {
-            view = mAdapter.getView(mSize - 1, view, this);
-
-            // Animate view being added to the bottom in the stack
-            mAnimator.animateAdd(view);
+                // Animate view being added to the bottom in the stack
+                mAnimator.animateAdd(view);
+            }
         }
     }
 
@@ -294,13 +294,14 @@ public class StackView extends FrameLayout implements StackAnimationListener {
         for (int i = 0; i < mSize; i++) {
             mViews.add(null);
         }
+        mCurrentSize = 0;
         for (int i = mSize - 1; i >= 0; i--) {
             View view = LayoutInflater.from(getContext()).inflate(mLayout, this, false);
             if (mHardwareAccelerationEnabled) {
                 view.setLayerType(View.LAYER_TYPE_HARDWARE, null);
             }
             if (mAdapter != null && i < mAdapter.getCount()) {
-                mItemsShowing++;
+                mCurrentSize++;
                 view = mAdapter.getView(i, view, this);
             } else {
                 // If there's no adapter set or the adapter has less items and the current index,

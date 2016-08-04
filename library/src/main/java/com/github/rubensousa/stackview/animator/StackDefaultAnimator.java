@@ -35,20 +35,25 @@ public class StackDefaultAnimator extends StackAnimator {
     @Override
     public void animateAdd(View view) {
         ViewCompat.animate(view)
-                .translationY((mStackView.getSize() - 1) * mStackView.getVerticalSpacing())
+                .scaleY(1f)
+                .scaleX(1 - mStackView.getCurrentSize() * mStackView.getScaleXFactor()
+                        < StackView.SCALE_X_MIN ? StackView.SCALE_X_MIN
+                        : 1 - mStackView.getCurrentSize() * mStackView.getScaleXFactor())
+                .translationY((mStackView.getCurrentSize() * mStackView.getVerticalSpacing()))
                 .rotation(mStackView.nextRotation())
-                .setDuration(getAnimationDuration() / 2)
-                .setInterpolator(new AccelerateInterpolator());
+                .setStartDelay(mStackView.getCurrentSize() * 80)
+                .setDuration(getAnimationDuration())
+                .setInterpolator(new OvershootInterpolator(0.3f));
     }
 
     @Override
     public void animateChange(View view, final int stackPosition, int stackSize) {
-
         ViewCompat.animate(view)
                 .scaleX(1 - stackPosition * mStackView.getScaleXFactor() < StackView.SCALE_X_MIN ?
                         StackView.SCALE_X_MIN : 1 - stackPosition * mStackView.getScaleXFactor())
                 .translationX(stackPosition * mStackView.getHorizontalSpacing())
                 .translationZ((stackSize - 1 - stackPosition) * 10)
+                .setStartDelay(stackPosition * 50)
                 .setInterpolator(new AccelerateInterpolator())
                 .setDuration(getAnimationDuration())
                 .setListener(new ViewPropertyAnimatorListenerAdapter() {
@@ -69,9 +74,9 @@ public class StackDefaultAnimator extends StackAnimator {
     @Override
     public void animatePop(Object item, View view) {
         ViewCompat.animate(view)
-                .translationX(-view.getWidth() * 1.1f)
+                .translationX(-view.getWidth() * 1.4f)
                 .translationY(view.getHeight() * 0.1f)
-                .translationZ(ViewCompat.getTranslationZ(view) * 1.2f)
+                .translationZ(ViewCompat.getTranslationZ(view) * 1.5f)
                 .setDuration(getAnimationDuration())
                 .rotation(-25)
                 .setInterpolator(new AccelerateInterpolator())
