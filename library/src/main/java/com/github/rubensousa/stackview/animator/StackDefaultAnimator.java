@@ -22,22 +22,48 @@ import android.view.View;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.OvershootInterpolator;
 
+import com.github.rubensousa.stackview.StackView;
+
 public class StackDefaultAnimator extends StackAnimator {
 
+    private StackView mStackView;
+
+    public StackDefaultAnimator(StackView stackView) {
+        mStackView = stackView;
+    }
+
     @Override
-    public void animateReveal(Object item, View view) {
+    public void animateAdd(View view) {
         ViewCompat.animate(view)
-                .scaleX(1.0f)
-                .scaleY(1.0f)
-                .setInterpolator(new OvershootInterpolator(2f))
+                .translationY((mStackView.getSize() - 1) * mStackView.getVerticalSpacing())
+                .rotation(mStackView.nextRotation())
+                .setDuration(getAnimationDuration() / 2)
+                .setInterpolator(new AccelerateInterpolator());
+    }
+
+    @Override
+    public void animateChange(View view, final int stackPosition, int stackSize) {
+
+        ViewCompat.animate(view)
+                .scaleX(1 - stackPosition * mStackView.getScaleXFactor() < StackView.SCALE_X_MIN ?
+                        StackView.SCALE_X_MIN : 1 - stackPosition * mStackView.getScaleXFactor())
+                .translationX(stackPosition * mStackView.getHorizontalSpacing())
+                .translationZ((stackSize - 1 - stackPosition) * 10)
+                .setInterpolator(new AccelerateInterpolator())
+                .setDuration(getAnimationDuration())
                 .setListener(new ViewPropertyAnimatorListenerAdapter() {
                     @Override
                     public void onAnimationEnd(View view) {
                         super.onAnimationEnd(view);
                         ViewCompat.animate(view).setListener(null);
-                        getAnimationListener().onEnterFinished(view);
+                        getAnimationListener().onChangeFinished(view, stackPosition);
                     }
                 });
+
+        ViewCompat.animate(view)
+                .translationY(stackPosition * mStackView.getVerticalSpacing())
+                .setInterpolator(new OvershootInterpolator(3f))
+                .setDuration(getAnimationDuration());
     }
 
     @Override

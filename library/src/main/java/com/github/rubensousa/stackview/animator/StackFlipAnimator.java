@@ -34,7 +34,12 @@ public class StackFlipAnimator extends StackAnimator {
     }
 
     @Override
-    public void animateReveal(Object item, View view) {
+    public void animateAdd(View view) {
+
+    }
+
+    @Override
+    public void animateChange(View view, int stackPosition, int stackSize) {
 
     }
 

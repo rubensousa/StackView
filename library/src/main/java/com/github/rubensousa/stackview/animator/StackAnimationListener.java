@@ -23,6 +23,5 @@ public interface StackAnimationListener {
 
     void onExitFinished(View view);
 
-    void onEnterFinished(View view);
-
+    void onChangeFinished(View view, int stackPosition);
 }

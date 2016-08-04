@@ -25,9 +25,8 @@ import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.animation.AccelerateInterpolator;
-import android.view.animation.OvershootInterpolator;
 import android.widget.FrameLayout;
+
 import com.github.rubensousa.stackview.animator.StackAnimationListener;
 import com.github.rubensousa.stackview.animator.StackAnimator;
 import com.github.rubensousa.stackview.animator.StackDefaultAnimator;
@@ -40,8 +39,8 @@ public class StackView extends FrameLayout implements StackAnimationListener {
 
     public static final int ANIMATION_DURATION = 500;
     private static final float VERTICAL_SPACING = 10f;
-    private static final float SCALE_X_FACTOR = 0.05f;
-    private static final float SCALE_X_MIN = 0.4f;
+    public static final float SCALE_X_FACTOR = 0.05f;
+    public static final float SCALE_X_MIN = 0.4f;
 
     private ArrayList<View> mViews;
     private StackAdapter mAdapter;
@@ -80,18 +79,23 @@ public class StackView extends FrameLayout implements StackAnimationListener {
         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.StackView, 0, 0);
         mSize = a.getInteger(R.styleable.StackView_stackview_size, 4);
         mHorizontalSpacing = a.getDimension(R.styleable.StackView_stackview_horizontalSpacing, 0f);
-        mVerticalSpacing = a.getDimension(R.styleable.StackView_stackview_verticalSpacing, VERTICAL_SPACING);
+        mVerticalSpacing = a.getDimension(R.styleable.StackView_stackview_verticalSpacing,
+                VERTICAL_SPACING);
         mItemMaxRotation = a.getInteger(R.styleable.StackView_stackview_rotationRandomMagnitude, 0);
-        mScaleXFactor = a.getFloat(R.styleable.StackView_stackview_horizontalScalingFactor, SCALE_X_FACTOR);
+        mScaleXFactor = a.getFloat(R.styleable.StackView_stackview_horizontalScalingFactor,
+                SCALE_X_FACTOR);
+
         if (mScaleXFactor < 0 || mScaleXFactor > 1) {
             throw new IllegalArgumentException("horizontalScalingFactor must be greater than 0" +
                     "and less than 1");
         }
+
         mCyclic = a.getBoolean(R.styleable.StackView_stackview_cyclic, false);
         mLayout = a.getResourceId(R.styleable.StackView_stackview_adapterLayout, 0);
-        mAnimator = new StackDefaultAnimator();
+        mAnimator = new StackDefaultAnimator(this);
         mAnimator.setStackAnimationListener(this);
         a.recycle();
+
         setClipToPadding(false);
         setClipChildren(false);
 
@@ -101,6 +105,41 @@ public class StackView extends FrameLayout implements StackAnimationListener {
 
     }
 
+    public int getSize() {
+        return mSize;
+    }
+
+    public int getCurrentSize() {
+        return mCurrentSize;
+    }
+
+    public float getScaleXFactor() {
+        return mScaleXFactor;
+    }
+
+    public float getVerticalSpacing() {
+        return mVerticalSpacing;
+    }
+
+    public float getHorizontalSpacing() {
+        return mHorizontalSpacing;
+    }
+
+    public void setStackEventListener(StackEventListener eventListener) {
+        mEventListener = eventListener;
+    }
+
+    public void setAnimator(StackAnimator animator) {
+        mAnimator = animator;
+        mAnimator.setStackAnimationListener(this);
+    }
+
+    /**
+     * Enable hardware acceleration for this StackView.
+     * By default, this is enabled to improve animation performance.
+     *
+     * @param enable true if you want to enable hardware acceleration
+     */
     public void enableHardwareAcceleration(boolean enable) {
         mHardwareAccelerationEnabled = enable;
         for (View view : mViews) {
@@ -114,15 +153,6 @@ public class StackView extends FrameLayout implements StackAnimationListener {
         }
     }
 
-    public void setStackEventListener(StackEventListener eventListener) {
-        mEventListener = eventListener;
-    }
-
-    public void setAnimator(StackAnimator animator) {
-        mAnimator = animator;
-        mAnimator.setStackAnimationListener(this);
-    }
-
     public void pop() {
         if (mPopping || mAdapter.isEmpty()) {
             return;
@@ -134,11 +164,7 @@ public class StackView extends FrameLayout implements StackAnimationListener {
 
         mAnimator.animatePop(currentObj, currentView);
 
-        if (!mAdapter.isEmpty()) {
-            View nextView = mViews.get(1);
-
-            mAnimator.animateReveal(mAdapter.getCurrentItem(), nextView);
-        } else {
+        if (mAdapter.isEmpty()) {
             mEventListener.onStackEmpty(mCount);
         }
 
@@ -146,6 +172,11 @@ public class StackView extends FrameLayout implements StackAnimationListener {
         mCount++;
     }
 
+    /**
+     * Set a StackAdapter so that this StackView can inflate it's views.
+     *
+     * @param adapter adapter to be set
+     */
     public void setAdapter(StackAdapter<?> adapter) {
 
         if (mAdapter != null && mObserver != null) {
@@ -165,11 +196,11 @@ public class StackView extends FrameLayout implements StackAnimationListener {
 
                     for (int i = 0; i < itemsToAdd; i++) {
                         int stackPosition = mItemsShowing;
-                        mItemsShowing++;
                         View view = mAdapter.getView(i, mViews.get(stackPosition), StackView.this);
                         view.setVisibility(View.VISIBLE);
-                        view.setRotation(setupRotation());
+                        view.setRotation(nextRotation());
                         setupView(view, stackPosition);
+                        mItemsShowing++;
                     }
 
                 }
@@ -186,6 +217,76 @@ public class StackView extends FrameLayout implements StackAnimationListener {
         mAdapter.registerDataSetObserver(mObserver);
         removeAllViews();
         addViews();
+    }
+
+    @Override
+    public void onExitFinished(View view) {
+
+        // Reset view properties
+        ViewCompat.setRotation(view, 0f);
+        ViewCompat.setRotationY(view, 0f);
+        ViewCompat.setRotationX(view, 0f);
+        ViewCompat.setAlpha(view, 1f);
+        ViewCompat.setScaleY(view, 1f);
+        ViewCompat.setScaleX(view, 1 - (mSize - 1) * mScaleXFactor);
+        ViewCompat.setTranslationZ(view, 0f);
+        ViewCompat.setTranslationY(view, (mSize - 2) * mVerticalSpacing);
+        ViewCompat.setTranslationX(view, 0f);
+
+        mPopping = false;
+        Object data = mAdapter.pop();
+
+        // If cyclic looping is enabled, we push the data again to the stack
+        if (mCyclic) {
+            //noinspection unchecked
+            mAdapter.push(data);
+        } else if (mAdapter.getCount() - 1 < mSize) {
+            mItemsShowing--;
+            view.setVisibility(View.INVISIBLE);
+            return;
+        }
+
+        // Get a new view for the next position
+        if (mAdapter.getCount() >= mSize) {
+            view = mAdapter.getView(mSize - 1, view, this);
+
+            // Animate view being added to the bottom in the stack
+            mAnimator.animateAdd(view);
+        }
+    }
+
+    @Override
+    public void onChangeFinished(View view, int stackPosition) {
+        if (stackPosition == 0) {
+            // Reset view properties
+            if (mItemMaxRotation <= 0) {
+                ViewCompat.setRotation(view, 0f);
+            }
+            ViewCompat.setRotationY(view, 0f);
+            ViewCompat.setRotationX(view, 0f);
+            ViewCompat.setAlpha(view, 1f);
+            ViewCompat.setScaleY(view, 1f);
+            ViewCompat.setScaleX(view, 1f);
+            ViewCompat.setTranslationZ(view, (mSize - 1) * 10f);
+            ViewCompat.setTranslationY(view, 0f);
+            ViewCompat.setTranslationX(view, 0f);
+        }
+    }
+
+    /**
+     * Generate the next random rotation for the last view in the stack
+     *
+     * @return a rotation between -max and +max
+     */
+    public int nextRotation() {
+        if (mItemMaxRotation == 0) {
+            return 0;
+        }
+
+        boolean leftRotation = mRandom.nextInt(2) == 0;
+
+        return leftRotation ? mRandom.nextInt(mItemMaxRotation) * (-1)
+                : mRandom.nextInt(mItemMaxRotation);
     }
 
     private void addViews() {
@@ -213,7 +314,7 @@ public class StackView extends FrameLayout implements StackAnimationListener {
             setupView(view, i);
 
             // Set a random rotation
-            view.setRotation(setupRotation());
+            view.setRotation(nextRotation());
         }
     }
 
@@ -228,92 +329,20 @@ public class StackView extends FrameLayout implements StackAnimationListener {
                 setupView(view, i);
             } else {
                 // Set a random rotation
-                view.setRotation(setupRotation());
+                view.setRotation(nextRotation());
             }
         }
     }
 
-    @Override
-    public void onExitFinished(View view) {
-
-        // Reset view properties
-        ViewCompat.setRotation(view, 0f);
-        ViewCompat.setRotationY(view, 0f);
-        ViewCompat.setRotationX(view, 0f);
-        ViewCompat.setAlpha(view, 1f);
-        ViewCompat.setScaleY(view, 1f);
-        ViewCompat.setScaleX(view, 1 - (mSize - 1) * mScaleXFactor);
-        ViewCompat.setTranslationZ(view, 0f);
-        ViewCompat.setTranslationY(view, (mSize - 2) * mVerticalSpacing);
-        ViewCompat.setTranslationX(view, 0f);
-
-        mPopping = false;
-
-        if (mAdapter.getCount() - 1 < mSize) {
-            if (!mCyclic) {
-                mItemsShowing--;
-                mAdapter.pop();
-                view.setVisibility(View.INVISIBLE);
-            }
-            return;
-        }
-
-        if (!mCyclic) {
-            mAdapter.pop();
-        }
-
-        // Get a new view for the next position
-        if (mAdapter.getCount() >= mSize) {
-            view = mAdapter.getView(mSize - 1, view, this);
-        }
-
-        // Animate reveal on bottom
-        ViewCompat.animate(view)
-                .translationY((mSize - 1) * mVerticalSpacing)
-                .rotation(setupRotation())
-                .setDuration(ANIMATION_DURATION / 2)
-                .setInterpolator(new AccelerateInterpolator());
-    }
-
-    @Override
-    public void onRevealFinished(View view) {
-        // Reset view properties
-        if (mItemMaxRotation <= 0) {
-            ViewCompat.setRotation(view, 0f);
-        }
-        ViewCompat.setRotationY(view, 0f);
-        ViewCompat.setRotationX(view, 0f);
-        ViewCompat.setAlpha(view, 1f);
-        ViewCompat.setScaleY(view, 1f);
-        ViewCompat.setScaleX(view, 1f);
-        ViewCompat.setTranslationZ(view, (mSize - 1) * 10f);
-        ViewCompat.setTranslationY(view, 0f);
-        ViewCompat.setTranslationX(view, 0f);
-    }
-
-    private int setupRotation() {
-        if (mItemMaxRotation == 0) {
-            return 0;
-        }
-
-        boolean leftRotation = mRandom.nextInt(2) == 0;
-
-        return leftRotation ? mRandom.nextInt(mItemMaxRotation) * (-1)
-                : mRandom.nextInt(mItemMaxRotation);
-    }
-
+    /**
+     * Setup the view properties for the correct position in the stack
+     *
+     * @param view          View to be setup
+     * @param stackPosition View position in the stack
+     */
     private void setupView(View view, int stackPosition) {
         if (!isInEditMode()) {
-            ViewCompat.animate(view)
-                    .scaleX(1 - stackPosition * mScaleXFactor < SCALE_X_MIN ? SCALE_X_MIN
-                            : 1 - stackPosition * mScaleXFactor)
-                    .translationX(stackPosition * mHorizontalSpacing)
-                    .translationZ((mSize - 1 - stackPosition) * 10)
-                    .setDuration(ANIMATION_DURATION);
-            ViewCompat.animate(view)
-                    .translationY(stackPosition * mVerticalSpacing)
-                    .setInterpolator(new OvershootInterpolator(3f))
-                    .setDuration(ANIMATION_DURATION);
+            mAnimator.animateChange(view, stackPosition, mSize);
         } else {
             ViewCompat.setScaleX(view, 1 - stackPosition * mScaleXFactor < SCALE_X_MIN
                     ? SCALE_X_MIN : 1 - stackPosition * mScaleXFactor);

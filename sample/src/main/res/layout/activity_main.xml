@@ -35,8 +35,8 @@
         android:padding="@dimen/activity_horizontal_margin"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         app:stackview_adapterLayout="@layout/adapter"
-        app:stackview_horizontalScalingFactor="0.01"
-        app:stackview_cyclic="false"
+        app:stackview_horizontalScalingFactor="0.02"
+        app:stackview_cyclic="true"
         app:stackview_size="6"
         app:stackview_verticalSpacing="2dp" />
 

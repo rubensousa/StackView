@@ -30,19 +30,19 @@ public abstract class StackAnimator {
     private int mMoveDirection;
     private StackAnimationListener mEventListener;
 
-    public StackAnimator(){
+    public StackAnimator() {
         mMoveDirection = MOVE_LEFT;
     }
 
-    public StackAnimator(int moveDirection){
+    public StackAnimator(int moveDirection) {
         mMoveDirection = moveDirection;
     }
 
-    public int getMoveDirection(){
+    public int getMoveDirection() {
         return mMoveDirection;
     }
 
-    public void setMoveDirection(int moveDirection){
+    public void setMoveDirection(int moveDirection) {
         mMoveDirection = moveDirection;
     }
 
@@ -54,11 +54,13 @@ public abstract class StackAnimator {
         mEventListener = eventListener;
     }
 
-    public int getAnimationDuration(){
+    public int getAnimationDuration() {
         return ANIMATION_DURATION;
     }
 
-    public abstract void animateReveal(Object item, View view);
+    public abstract void animateAdd(View view);
+
+    public abstract void animateChange(View view, int stackPosition, int stackSize);
 
     public abstract void animatePop(Object item, View view);
 }

@@ -77,7 +77,7 @@ public class MainActivity extends AppCompatActivity implements Toolbar.OnMenuIte
 
     @Override
     public void onPop(String data) {
-       // Snackbar.make(mStackView, data, Snackbar.LENGTH_SHORT).show();
+        // Snackbar.make(mStackView, data, Snackbar.LENGTH_SHORT).show();
     }
 
     @Override
@@ -100,7 +100,7 @@ public class MainActivity extends AppCompatActivity implements Toolbar.OnMenuIte
     public boolean onMenuItemClick(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.defaultAnim:
-                mStackView.setAnimator(new StackDefaultAnimator());
+                mStackView.setAnimator(new StackDefaultAnimator(mStackView));
                 return true;
             case R.id.slide:
                 mStackView.setAnimator(new StackSlideAnimator(StackAnimator.MOVE_LEFT));
@@ -120,4 +120,5 @@ public class MainActivity extends AppCompatActivity implements Toolbar.OnMenuIte
         }
         return false;
     }
+
 }
