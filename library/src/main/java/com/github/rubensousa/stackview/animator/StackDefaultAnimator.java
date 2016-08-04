@@ -28,6 +28,7 @@ public class StackDefaultAnimator extends StackAnimator {
 
     @Override
     public void animateAdd(View view) {
+        ViewCompat.setScaleY(view, 0.7f);
         ViewCompat.animate(view)
                 .scaleY(1f)
                 .scaleX(1 - getStackView().getCurrentSize() * getStackView().getScaleXFactor()
@@ -46,7 +47,8 @@ public class StackDefaultAnimator extends StackAnimator {
                 .scaleX(1 - stackPosition * getStackView().getScaleXFactor() < StackView.SCALE_X_MIN ?
                         StackView.SCALE_X_MIN : 1 - stackPosition * getStackView().getScaleXFactor())
                 .translationX(stackPosition * getStackView().getHorizontalSpacing())
-                .translationZ((getStackView().getSize() - 1 - stackPosition) * 10)
+                .translationZ((getStackView().getSize() - 1 - stackPosition)
+                        * getStackView().getElevationSpacing())
                 .setStartDelay(stackPosition * 50)
                 .setInterpolator(new AccelerateInterpolator())
                 .setDuration(getAnimationDuration())
