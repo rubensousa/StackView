@@ -26,33 +26,27 @@ import com.github.rubensousa.stackview.StackView;
 
 public class StackDefaultAnimator extends StackAnimator {
 
-    private StackView mStackView;
-
-    public StackDefaultAnimator(StackView stackView) {
-        mStackView = stackView;
-    }
-
     @Override
     public void animateAdd(View view) {
         ViewCompat.animate(view)
                 .scaleY(1f)
-                .scaleX(1 - mStackView.getCurrentSize() * mStackView.getScaleXFactor()
+                .scaleX(1 - getStackView().getCurrentSize() * getStackView().getScaleXFactor()
                         < StackView.SCALE_X_MIN ? StackView.SCALE_X_MIN
-                        : 1 - mStackView.getCurrentSize() * mStackView.getScaleXFactor())
-                .translationY((mStackView.getCurrentSize() * mStackView.getVerticalSpacing()))
-                .rotation(mStackView.nextRotation())
-                .setStartDelay(mStackView.getCurrentSize() * 80)
+                        : 1 - getStackView().getCurrentSize() * getStackView().getScaleXFactor())
+                .translationY((getStackView().getCurrentSize() * getStackView().getVerticalSpacing()))
+                .rotation(getStackView().nextRotation())
+                .setStartDelay(getStackView().getCurrentSize() * 80)
                 .setDuration(getAnimationDuration())
                 .setInterpolator(new OvershootInterpolator(0.3f));
     }
 
     @Override
-    public void animateChange(View view, final int stackPosition, int stackSize) {
+    public void animateChange(View view, final int stackPosition) {
         ViewCompat.animate(view)
-                .scaleX(1 - stackPosition * mStackView.getScaleXFactor() < StackView.SCALE_X_MIN ?
-                        StackView.SCALE_X_MIN : 1 - stackPosition * mStackView.getScaleXFactor())
-                .translationX(stackPosition * mStackView.getHorizontalSpacing())
-                .translationZ((stackSize - 1 - stackPosition) * 10)
+                .scaleX(1 - stackPosition * getStackView().getScaleXFactor() < StackView.SCALE_X_MIN ?
+                        StackView.SCALE_X_MIN : 1 - stackPosition * getStackView().getScaleXFactor())
+                .translationX(stackPosition * getStackView().getHorizontalSpacing())
+                .translationZ((getStackView().getSize() - 1 - stackPosition) * 10)
                 .setStartDelay(stackPosition * 50)
                 .setInterpolator(new AccelerateInterpolator())
                 .setDuration(getAnimationDuration())
@@ -66,7 +60,7 @@ public class StackDefaultAnimator extends StackAnimator {
                 });
 
         ViewCompat.animate(view)
-                .translationY(stackPosition * mStackView.getVerticalSpacing())
+                .translationY(stackPosition * getStackView().getVerticalSpacing())
                 .setInterpolator(new OvershootInterpolator(3f))
                 .setDuration(getAnimationDuration());
     }

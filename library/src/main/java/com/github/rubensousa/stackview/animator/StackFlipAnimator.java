@@ -22,7 +22,7 @@ import android.support.v4.view.ViewPropertyAnimatorListenerAdapter;
 import android.view.View;
 import android.view.animation.AccelerateInterpolator;
 
-public class StackFlipAnimator extends StackAnimator {
+public class StackFlipAnimator extends StackMoveAnimator {
 
     public StackFlipAnimator(int moveDirection) {
         super(moveDirection);
@@ -31,16 +31,6 @@ public class StackFlipAnimator extends StackAnimator {
     @Override
     public int getAnimationDuration() {
         return 1000;
-    }
-
-    @Override
-    public void animateAdd(View view) {
-
-    }
-
-    @Override
-    public void animateChange(View view, int stackPosition, int stackSize) {
-
     }
 
     @Override

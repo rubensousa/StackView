@@ -22,20 +22,10 @@ import android.view.View;
 import android.view.animation.AccelerateInterpolator;
 
 
-public class StackSlideShrinkAnimator extends StackAnimator {
+public class StackSlideShrinkAnimator extends StackMoveAnimator {
 
-    public StackSlideShrinkAnimator(int slide) {
-        super(slide);
-    }
-
-    @Override
-    public void animateAdd(View view) {
-
-    }
-
-    @Override
-    public void animateChange(View view, int stackPosition, int stackSize) {
-
+    public StackSlideShrinkAnimator(int moveDirection) {
+        super(moveDirection);
     }
 
     @Override

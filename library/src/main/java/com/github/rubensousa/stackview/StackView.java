@@ -91,7 +91,8 @@ public class StackView extends FrameLayout implements StackAnimationListener {
 
         mCyclic = a.getBoolean(R.styleable.StackView_stackview_cyclic, false);
         mLayout = a.getResourceId(R.styleable.StackView_stackview_adapterLayout, 0);
-        mAnimator = new StackDefaultAnimator(this);
+        mAnimator = new StackDefaultAnimator();
+        mAnimator.setStackView(this);
         mAnimator.setStackAnimationListener(this);
         a.recycle();
 
@@ -131,6 +132,7 @@ public class StackView extends FrameLayout implements StackAnimationListener {
     public void setAnimator(StackAnimator animator) {
         mAnimator = animator;
         mAnimator.setStackAnimationListener(this);
+        mAnimator.setStackView(this);
     }
 
     /**
@@ -343,7 +345,7 @@ public class StackView extends FrameLayout implements StackAnimationListener {
      */
     private void setupView(View view, int stackPosition) {
         if (!isInEditMode()) {
-            mAnimator.animateChange(view, stackPosition, mSize);
+            mAnimator.animateChange(view, stackPosition);
         } else {
             ViewCompat.setScaleX(view, 1 - stackPosition * mScaleXFactor < SCALE_X_MIN
                     ? SCALE_X_MIN : 1 - stackPosition * mScaleXFactor);

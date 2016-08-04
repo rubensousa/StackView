@@ -18,32 +18,25 @@ package com.github.rubensousa.stackview.animator;
 
 import android.view.View;
 
-public abstract class StackAnimator {
+import com.github.rubensousa.stackview.StackView;
 
-    public static final int MOVE_UP = 0;
-    public static final int MOVE_DOWN = 1;
-    public static final int MOVE_LEFT = 2;
-    public static final int MOVE_RIGHT = 3;
+public abstract class StackAnimator {
 
     public static final int ANIMATION_DURATION = 500;
 
-    private int mMoveDirection;
     private StackAnimationListener mEventListener;
+    private StackView mStackView;
 
     public StackAnimator() {
-        mMoveDirection = MOVE_LEFT;
+
     }
 
-    public StackAnimator(int moveDirection) {
-        mMoveDirection = moveDirection;
+    public void setStackView(StackView stackView){
+        mStackView = stackView;
     }
 
-    public int getMoveDirection() {
-        return mMoveDirection;
-    }
-
-    public void setMoveDirection(int moveDirection) {
-        mMoveDirection = moveDirection;
+    public StackView getStackView(){
+        return mStackView;
     }
 
     public StackAnimationListener getAnimationListener() {
@@ -60,7 +53,7 @@ public abstract class StackAnimator {
 
     public abstract void animateAdd(View view);
 
-    public abstract void animateChange(View view, int stackPosition, int stackSize);
+    public abstract void animateChange(View view, int stackPosition);
 
     public abstract void animatePop(Object item, View view);
 }

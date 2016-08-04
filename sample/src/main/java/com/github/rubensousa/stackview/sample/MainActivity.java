@@ -8,7 +8,6 @@ import android.view.View;
 
 import com.github.rubensousa.stackview.StackAdapter;
 import com.github.rubensousa.stackview.StackView;
-import com.github.rubensousa.stackview.animator.StackAnimator;
 import com.github.rubensousa.stackview.animator.StackDefaultAnimator;
 import com.github.rubensousa.stackview.animator.StackSlideFadeAnimator;
 import com.github.rubensousa.stackview.animator.StackFlipAnimator;
@@ -100,22 +99,22 @@ public class MainActivity extends AppCompatActivity implements Toolbar.OnMenuIte
     public boolean onMenuItemClick(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.defaultAnim:
-                mStackView.setAnimator(new StackDefaultAnimator(mStackView));
+                mStackView.setAnimator(new StackDefaultAnimator());
                 return true;
             case R.id.slide:
-                mStackView.setAnimator(new StackSlideAnimator(StackAnimator.MOVE_LEFT));
+                mStackView.setAnimator(new StackSlideAnimator(StackSlideAnimator.MOVE_LEFT));
                 return true;
             case R.id.flip:
-                mStackView.setAnimator(new StackFlipAnimator(StackAnimator.MOVE_DOWN));
+                mStackView.setAnimator(new StackFlipAnimator(StackFlipAnimator.MOVE_DOWN));
                 return true;
             case R.id.flipSlide:
-                mStackView.setAnimator(new StackFlipSlideAnimator(StackAnimator.MOVE_UP));
+                mStackView.setAnimator(new StackFlipSlideAnimator(StackFlipSlideAnimator.MOVE_UP));
                 return true;
             case R.id.fade:
-                mStackView.setAnimator(new StackSlideFadeAnimator(StackAnimator.MOVE_DOWN));
+                mStackView.setAnimator(new StackSlideFadeAnimator(StackSlideFadeAnimator.MOVE_DOWN));
                 return true;
             case R.id.shrink:
-                mStackView.setAnimator(new StackSlideShrinkAnimator(StackAnimator.MOVE_DOWN));
+                mStackView.setAnimator(new StackSlideShrinkAnimator(StackSlideShrinkAnimator.MOVE_DOWN));
                 return true;
         }
         return false;
