@@ -38,7 +38,7 @@
         app:stackview_rotationRandomMagnitude="3"
         app:stackview_elevationSpacing="10dp"
         app:stackview_horizontalScalingFactor="0.02"
-        app:stackview_cyclic="true"
+        app:stackview_cyclicLooping="true"
         app:stackview_size="4"
         app:stackview_verticalSpacing="4dp" />
 

@@ -46,7 +46,7 @@ public class StackView extends FrameLayout implements StackAnimationListener {
     private StackAdapter mAdapter;
     private StackEventListener mEventListener;
     private StackAnimator mAnimator;
-    private boolean mCyclic;
+    private boolean mCyclicLooping;
     private float mHorizontalSpacing;
     private float mVerticalSpacing;
     private float mElevationSpacing;
@@ -92,7 +92,7 @@ public class StackView extends FrameLayout implements StackAnimationListener {
                     "and less than 1");
         }
 
-        mCyclic = a.getBoolean(R.styleable.StackView_stackview_cyclic, false);
+        mCyclicLooping = a.getBoolean(R.styleable.StackView_stackview_cyclicLooping, false);
         mLayout = a.getResourceId(R.styleable.StackView_stackview_adapterLayout, 0);
         mAnimator = new StackDefaultAnimator();
         mAnimator.setStackView(this);
@@ -246,7 +246,7 @@ public class StackView extends FrameLayout implements StackAnimationListener {
         Object data = mAdapter.pop();
 
         // If cyclic looping is enabled, we push the data again to the stack
-        if (mCyclic) {
+        if (mCyclicLooping) {
             mCurrentSize--;
             view.setVisibility(View.INVISIBLE);
             //noinspection unchecked
