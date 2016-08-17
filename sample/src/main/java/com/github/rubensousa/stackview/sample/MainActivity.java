@@ -86,12 +86,18 @@ public class MainActivity extends AppCompatActivity implements Toolbar.OnMenuIte
 
     private ArrayList<String> getData() {
         ArrayList<String> data = new ArrayList<>();
-        for (int i = 0; i < 1; i++) {
-            data.add("One");
-            data.add("Two");
-            data.add("Three");
-        }
-
+        data.add("One");
+        data.add("Two");
+        data.add("Three");
+        data.add("One");
+        data.add("Two");
+        data.add("Three");
+        data.add("One");
+        data.add("Two");
+        data.add("Three");
+        data.add("One");
+        data.add("Two");
+        data.add("Three");
         return data;
     }
 

@@ -44,7 +44,7 @@ public class StackFlipSlideAnimator extends StackMoveAnimator {
             ViewCompat.animate(view)
                     .translationX(getMoveDirection() == MOVE_LEFT
                             ? -view.getWidth() : view.getWidth())
-                    .translationZ(ViewCompat.getTranslationZ(view) * 1.5f)
+                    .translationZ(ViewCompat.getTranslationZ(view) * 2.5f)
                     .rotationY(getMoveDirection() == MOVE_LEFT ? 250 : -250)
                     .setDuration(getAnimationDuration())
                     .setInterpolator(new AccelerateInterpolator())
@@ -61,7 +61,7 @@ public class StackFlipSlideAnimator extends StackMoveAnimator {
             ViewCompat.animate(view)
                     .translationY(getMoveDirection() == MOVE_UP
                             ? -view.getHeight() : view.getHeight())
-                    .translationZ(ViewCompat.getTranslationZ(view) * 1.5f)
+                    .translationZ(ViewCompat.getTranslationZ(view) * 2.5f)
                     .rotationX(getMoveDirection() == MOVE_UP ? 250 : -250)
                     .setDuration(getAnimationDuration())
                     .setInterpolator(new AccelerateInterpolator())

@@ -20,9 +20,11 @@ package com.github.rubensousa.stackview;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.database.DataSetObserver;
+import android.os.Build;
 import android.support.annotation.LayoutRes;
 import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -162,7 +164,7 @@ public class StackView extends FrameLayout implements StackAnimationListener {
     }
 
     public void pop() {
-        if (mPopping || mAdapter.isEmpty()) {
+        if (mPopping || mCurrentSize == 0) {
             return;
         }
 
@@ -242,6 +244,13 @@ public class StackView extends FrameLayout implements StackAnimationListener {
         ViewCompat.setTranslationY(view, (mSize - 1) * mVerticalSpacing);
         ViewCompat.setTranslationX(view, 0f);
 
+        // Since before Lollipop there's no z-translation, we need to remove the current view
+        // and add it again as the last one so it doesn't stay in a incorrect position
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+            removeView(view);
+            addView(view, 0);
+        }
+
         mPopping = false;
         Object data = mAdapter.pop();
 
@@ -263,6 +272,8 @@ public class StackView extends FrameLayout implements StackAnimationListener {
                 mAnimator.animateAdd(view);
             }
         }
+
+        Log.d("CurrentSize", mCurrentSize + "");
     }
 
     @Override

@@ -37,7 +37,7 @@ public class StackSlideShrinkAnimator extends StackMoveAnimator {
                         : getMoveDirection() == MOVE_DOWN ? view.getHeight() : 0f)
                 .translationX(getMoveDirection() == MOVE_LEFT ? -view.getWidth() * 1.2f :
                         getMoveDirection() == MOVE_RIGHT ? view.getWidth() * 1.2f : 0.0f)
-                .translationZ(ViewCompat.getTranslationZ(view) * 1.5f)
+                .translationZ(ViewCompat.getTranslationZ(view) * 2.5f)
                 .setInterpolator(new AccelerateInterpolator())
                 .setDuration(getAnimationDuration())
                 .setListener(new ViewPropertyAnimatorListenerAdapter() {

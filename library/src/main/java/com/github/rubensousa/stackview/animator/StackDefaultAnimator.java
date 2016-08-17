@@ -72,7 +72,7 @@ public class StackDefaultAnimator extends StackAnimator {
         ViewCompat.animate(view)
                 .translationX(-view.getWidth() * 1.4f)
                 .translationY(view.getHeight() * 0.1f)
-                .translationZ(ViewCompat.getTranslationZ(view) * 1.5f)
+                .translationZ(ViewCompat.getTranslationZ(view) * 2.5f)
                 .setDuration(getAnimationDuration())
                 .rotation(-25)
                 .setInterpolator(new AccelerateInterpolator())

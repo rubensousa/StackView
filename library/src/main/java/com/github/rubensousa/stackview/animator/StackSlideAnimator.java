@@ -35,7 +35,7 @@ public class StackSlideAnimator extends StackMoveAnimator {
                         getMoveDirection() == MOVE_RIGHT ? view.getWidth() * 1.2f : 0.0f)
                 .translationY(getMoveDirection() == MOVE_UP ? -view.getHeight()
                         : getMoveDirection() == MOVE_DOWN ? view.getHeight() : 0f)
-                .translationZ(ViewCompat.getTranslationZ(view) * 1.5f)
+                .translationZ(ViewCompat.getTranslationZ(view) * 2.5f)
                 .setInterpolator(new AccelerateInterpolator())
                 .setDuration(getAnimationDuration())
                 .setListener(new ViewPropertyAnimatorListenerAdapter() {
