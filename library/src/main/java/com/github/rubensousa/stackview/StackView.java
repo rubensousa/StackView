@@ -24,7 +24,6 @@ import android.os.Build;
 import android.support.annotation.LayoutRes;
 import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -272,8 +271,6 @@ public class StackView extends FrameLayout implements StackAnimationListener {
                 mAnimator.animateAdd(view);
             }
         }
-
-        Log.d("CurrentSize", mCurrentSize + "");
     }
 
     @Override
