@@ -3,13 +3,13 @@ package com.github.rubensousa.stackview;
 import android.support.v4.view.ViewCompat;
 import android.view.View;
 import android.view.ViewPropertyAnimator;
-import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
+import android.view.animation.LinearInterpolator;
 
 
 public class StackDefaultViewAnimator implements StackViewAnimator {
 
-    public static final int MAX_ROTATION = 20; // degrees
+    private static final int MAX_ROTATION = 20; // degrees
 
     private float verticalSpacing;
     private float elevationSpacing;
@@ -36,7 +36,7 @@ public class StackDefaultViewAnimator implements StackViewAnimator {
 
     @Override
     public void animateAdd(View view) {
-        view.setScaleY(0f);
+        view.setScaleY(0.8f);
         view.setTranslationX(0);
         view.animate()
                 .scaleY(1f)
@@ -48,17 +48,21 @@ public class StackDefaultViewAnimator implements StackViewAnimator {
     @Override
     public ViewPropertyAnimator animateToLeft(View view) {
         return view.animate()
-                .translationX(-view.getWidth() * 2)
-                .rotation(MAX_ROTATION)
-                .setInterpolator(new AccelerateInterpolator());
+                .translationX(-view.getWidth())
+                .rotation(-MAX_ROTATION)
+                .translationY(view.getTranslationY()*2)
+                .setDuration(150)
+                .setInterpolator(new LinearInterpolator());
     }
 
     @Override
     public ViewPropertyAnimator animateToRight(View view) {
         return view.animate()
-                .translationX(view.getWidth() * 2)
+                .translationX(view.getWidth())
                 .rotation(MAX_ROTATION)
-                .setInterpolator(new AccelerateInterpolator());
+                .translationY(view.getTranslationY()*2)
+                .setDuration(150)
+                .setInterpolator(new LinearInterpolator());
     }
 
     @Override

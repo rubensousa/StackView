@@ -10,13 +10,9 @@ public interface StackViewAnimator {
 
     void animateAdd(View view);
 
+    void rotate(View view);
+
     ViewPropertyAnimator animateToLeft(View view);
 
     ViewPropertyAnimator animateToRight(View view);
-
-    void rotate(View view);
-
-    interface OnAnimationFinishListener {
-        void onViewSwiped(View view);
-    }
 }

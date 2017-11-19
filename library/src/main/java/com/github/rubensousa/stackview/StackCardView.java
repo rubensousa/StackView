@@ -21,7 +21,6 @@ import android.animation.AnimatorListenerAdapter;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.database.DataSetObserver;
-import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.view.ViewCompat;
@@ -29,7 +28,6 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewConfiguration;
 import android.widget.FrameLayout;
 
 import java.util.ArrayList;
@@ -142,6 +140,8 @@ public class StackCardView extends FrameLayout implements View.OnTouchListener {
                 View view = adapter.getView(stackPosition, views.get(stackPosition), this);
                 view.setVisibility(View.VISIBLE);
                 currentViews++;
+                view.setTranslationX(0);
+                view.setRotation(0);
                 animator.setupView(view, stackPosition);
             }
         }
@@ -210,7 +210,10 @@ public class StackCardView extends FrameLayout implements View.OnTouchListener {
         }
 
         for (int i = 0; i < maxViews - 1; i++) {
-            animator.setupView(views.get(i), i);
+            View v = views.get(i);
+            v.setTranslationX(0);
+            v.setRotation(0);
+            animator.setupView(v, i);
         }
     }
 
