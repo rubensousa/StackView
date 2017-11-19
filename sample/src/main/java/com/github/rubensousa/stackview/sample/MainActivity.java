@@ -39,7 +39,7 @@ public class MainActivity extends AppCompatActivity implements Toolbar.OnMenuIte
         findViewById(R.id.fab).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mAdapter.pop();
+                mAdapter.pop(true);
             }
         });
 
@@ -75,12 +75,17 @@ public class MainActivity extends AppCompatActivity implements Toolbar.OnMenuIte
     }
 
     @Override
-    public void onPop(String data) {
-        // Snackbar.make(mStackView, data, Snackbar.LENGTH_SHORT).show();
+    public void onStackEmpty(int lastPosition) {
+
     }
 
     @Override
-    public void onStackEmpty(int lastPosition) {
+    public void onPopLeft(String item) {
+
+    }
+
+    @Override
+    public void onPopRight(String item) {
 
     }
 

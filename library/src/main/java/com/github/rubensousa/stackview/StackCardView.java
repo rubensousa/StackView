@@ -38,9 +38,11 @@ public class StackCardView extends FrameLayout implements View.OnTouchListener {
     private int layoutId;
     private int maxViews;
     private int currentViews;
+    private float startX;
+    private float startY;
     private List<View> views;
     private StackAdapter adapter;
-    private StackViewAnimator viewHandler;
+    private StackViewAnimator animator;
     private DataSetObserver observer = new DataSetObserver() {
         @Override
         public void onChanged() {
@@ -72,7 +74,7 @@ public class StackCardView extends FrameLayout implements View.OnTouchListener {
         a.recycle();
         setClipToPadding(false);
         setClipChildren(false);
-        viewHandler = new StackDefaultViewAnimator(this,
+        animator = new StackDefaultViewAnimator(this,
                 getResources().getDimensionPixelOffset(R.dimen.stackview_vertical_spacing),
                 getResources().getDimensionPixelOffset(R.dimen.stackview_elevation_spacing));
         if (isInEditMode()) {
@@ -82,11 +84,38 @@ public class StackCardView extends FrameLayout implements View.OnTouchListener {
 
     @Override
     public boolean onTouch(View v, MotionEvent event) {
-        View firstView = getChildAt(0);
+        View firstView = getChildAt(currentViews - 1);
         if (!firstView.equals(v)) {
             return false;
         }
-        return true;
+        switch (event.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                startX = event.getX();
+                startY = event.getY();
+                v.clearAnimation();
+                return true;
+            case MotionEvent.ACTION_UP:
+                float translationX = v.getTranslationX();
+                if (v.getLeft() + translationX >= 0.5 * v.getWidth()) {
+                    animator.animateToRight(v);
+                    adapter.pop(true);
+                } else if (v.getLeft() + translationX <= -0.5 * v.getWidth()) {
+                    animator.animateToLeft(v);
+                    adapter.pop(false);
+                } else {
+                    animator.setupView(v, 0);
+                }
+                return true;
+            case MotionEvent.ACTION_MOVE:
+                float dx = event.getX() - startX;
+                float dy = event.getY() - startY;
+                v.setY(v.getY() + dy);
+                v.setX(v.getX() + dx);
+                animator.rotate(v);
+                return true;
+        }
+
+        return super.onTouchEvent(event);
     }
 
     public int getCurrentViews() {
@@ -97,11 +126,11 @@ public class StackCardView extends FrameLayout implements View.OnTouchListener {
         return maxViews;
     }
 
-    public void setViewHandler(StackViewAnimator viewHandler) {
-        this.viewHandler = viewHandler;
+    public void setAnimator(@NonNull StackViewAnimator animator) {
+        this.animator = animator;
     }
 
-    public void setAdapter(StackAdapter adapter) {
+    public void setAdapter(@NonNull StackAdapter adapter) {
         if (this.adapter != null) {
             this.adapter.unregisterDataSetObserver(observer);
         }
@@ -111,6 +140,7 @@ public class StackCardView extends FrameLayout implements View.OnTouchListener {
         addViews();
     }
 
+    @Nullable
     public StackAdapter getAdapter() {
         return adapter;
     }
@@ -124,7 +154,7 @@ public class StackCardView extends FrameLayout implements View.OnTouchListener {
                 View view = adapter.getView(stackPosition, views.get(stackPosition), this);
                 view.setVisibility(View.VISIBLE);
                 currentViews++;
-                viewHandler.setupView(view, stackPosition);
+                animator.setupView(view, stackPosition);
             }
         }
     }
@@ -152,7 +182,7 @@ public class StackCardView extends FrameLayout implements View.OnTouchListener {
             }
             views.set(i, view);
             addView(view);
-            viewHandler.setupView(view, i);
+            animator.setupView(view, i);
             requestLayout();
         }
     }

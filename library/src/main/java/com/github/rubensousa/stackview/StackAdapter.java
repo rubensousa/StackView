@@ -60,11 +60,15 @@ public abstract class StackAdapter<T> extends BaseAdapter {
         notifyDataSetChanged();
     }
 
-    public T pop() {
+    public T pop(boolean right) {
         T data = mData.remove(0);
         notifyDataSetChanged();
         if (mListener != null) {
-            mListener.onPop(data);
+            if (right) {
+                mListener.onPopRight(data);
+            } else {
+                mListener.onPopLeft(data);
+            }
         }
         return data;
     }
@@ -94,6 +98,8 @@ public abstract class StackAdapter<T> extends BaseAdapter {
     }
 
     public interface StackListener<T> {
-        void onPop(T item);
+        void onPopLeft(T item);
+
+        void onPopRight(T item);
     }
 }

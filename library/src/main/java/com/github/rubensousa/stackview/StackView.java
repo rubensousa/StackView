@@ -232,7 +232,7 @@ public class StackView extends FrameLayout implements StackAnimationListener {
         }
 
         mPopping = false;
-        Object data = mAdapter.pop();
+        Object data = mAdapter.pop(true);
 
         // If cyclic looping is enabled, we push the data again to the stack
         if (mCyclicLooping) {

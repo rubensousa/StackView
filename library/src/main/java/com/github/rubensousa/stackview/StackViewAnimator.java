@@ -7,7 +7,9 @@ public interface StackViewAnimator {
 
     void setupView(View view, int position);
 
-    void translateViewToLeft(View view);
+    void animateToLeft(View view);
 
-    void translateViewToRight(View view);
+    void animateToRight(View view);
+
+    void rotate(View view);
 }
