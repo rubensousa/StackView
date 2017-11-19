@@ -1,7 +1,6 @@
 package com.github.rubensousa.stackview.sample;
 
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -28,9 +27,8 @@ public class StringAdapter extends StackAdapter<String> {
 
     @Override
     public View getView(int i, View view, ViewGroup viewGroup) {
-        TextView textView = (TextView) view.findViewById(R.id.textView);
+        TextView textView = view.findViewById(R.id.textView);
         textView.setText(getItem(i));
-
         return view;
     }
 }

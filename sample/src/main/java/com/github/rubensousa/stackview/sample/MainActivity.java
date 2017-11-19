@@ -7,6 +7,7 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.github.rubensousa.stackview.StackAdapter;
+import com.github.rubensousa.stackview.StackCardView;
 import com.github.rubensousa.stackview.StackView;
 import com.github.rubensousa.stackview.animator.StackDefaultAnimator;
 import com.github.rubensousa.stackview.animator.StackSlideFadeAnimator;
@@ -21,7 +22,7 @@ import java.util.ArrayList;
 public class MainActivity extends AppCompatActivity implements Toolbar.OnMenuItemClickListener,
         StackAdapter.StackListener<String>, StackView.StackEventListener {
 
-    private StackView mStackView;
+    private StackCardView mStackView;
     private StringAdapter mAdapter;
 
     @Override
@@ -29,8 +30,8 @@ public class MainActivity extends AppCompatActivity implements Toolbar.OnMenuIte
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mStackView = (StackView) findViewById(R.id.stackView);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        mStackView = findViewById(R.id.stackView);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         toolbar.setTitle(R.string.app_name);
         toolbar.inflateMenu(R.menu.animators);
         toolbar.setOnMenuItemClickListener(this);
@@ -38,7 +39,7 @@ public class MainActivity extends AppCompatActivity implements Toolbar.OnMenuIte
         findViewById(R.id.fab).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mStackView.pop();
+                mAdapter.pop();
             }
         });
 
@@ -59,7 +60,6 @@ public class MainActivity extends AppCompatActivity implements Toolbar.OnMenuIte
 
         mAdapter.setStackListener(this);
         mStackView.setAdapter(mAdapter);
-        mStackView.setStackEventListener(this);
     }
 
     @Override
@@ -103,6 +103,11 @@ public class MainActivity extends AppCompatActivity implements Toolbar.OnMenuIte
 
     @Override
     public boolean onMenuItemClick(MenuItem item) {
+        return false;
+    }
+
+    /*@Override
+    public boolean onMenuItemClick(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.defaultAnim:
                 mStackView.setAnimator(new StackDefaultAnimator());
@@ -124,6 +129,6 @@ public class MainActivity extends AppCompatActivity implements Toolbar.OnMenuIte
                 return true;
         }
         return false;
-    }
+    }*/
 
 }

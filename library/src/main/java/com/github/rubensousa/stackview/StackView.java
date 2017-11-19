@@ -143,25 +143,6 @@ public class StackView extends FrameLayout implements StackAnimationListener {
         mAnimator.setStackView(this);
     }
 
-    /**
-     * Enable hardware acceleration for this StackView.
-     * By default, this is enabled to improve animation performance.
-     *
-     * @param enable true if you want to enable hardware acceleration
-     */
-    public void enableHardwareAcceleration(boolean enable) {
-        mHardwareAccelerationEnabled = enable;
-        for (View view : mViews) {
-            if (view != null) {
-                if (mHardwareAccelerationEnabled) {
-                    view.setLayerType(LAYER_TYPE_HARDWARE, null);
-                } else {
-                    view.setLayerType(LAYER_TYPE_SOFTWARE, null);
-                }
-            }
-        }
-    }
-
     public void pop() {
         if (mPopping || mCurrentSize == 0) {
             return;
