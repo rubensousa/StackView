@@ -94,15 +94,9 @@ public class MainActivity extends AppCompatActivity implements Toolbar.OnMenuIte
         data.add("One");
         data.add("Two");
         data.add("Three");
-        data.add("One");
-        data.add("Two");
-        data.add("Three");
-        data.add("One");
-        data.add("Two");
-        data.add("Three");
-        data.add("One");
-        data.add("Two");
-        data.add("Three");
+        data.add("Four");
+        data.add("Five");
+        data.add("Six");
         return data;
     }
 

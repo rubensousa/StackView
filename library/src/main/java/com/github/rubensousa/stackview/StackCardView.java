@@ -16,15 +16,20 @@
 
 package com.github.rubensousa.stackview;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.database.DataSetObserver;
+import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewConfiguration;
 import android.widget.FrameLayout;
 
 import java.util.ArrayList;
@@ -43,18 +48,6 @@ public class StackCardView extends FrameLayout implements View.OnTouchListener {
     private List<View> views;
     private StackAdapter adapter;
     private StackViewAnimator animator;
-    private DataSetObserver observer = new DataSetObserver() {
-        @Override
-        public void onChanged() {
-            onAdapterDataChanged();
-        }
-
-        @Override
-        public void onInvalidated() {
-            removeAllViews();
-            addViews();
-        }
-    };
 
     public StackCardView(@NonNull Context context) {
         this(context, null, 0);
@@ -84,10 +77,6 @@ public class StackCardView extends FrameLayout implements View.OnTouchListener {
 
     @Override
     public boolean onTouch(View v, MotionEvent event) {
-        View firstView = getChildAt(currentViews - 1);
-        if (!firstView.equals(v)) {
-            return false;
-        }
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 startX = event.getX();
@@ -96,11 +85,11 @@ public class StackCardView extends FrameLayout implements View.OnTouchListener {
                 return true;
             case MotionEvent.ACTION_UP:
                 float translationX = v.getTranslationX();
-                if (v.getLeft() + translationX >= 0.5 * v.getWidth()) {
-                    animator.animateToRight(v);
+                if (v.getLeft() + translationX >= 0.4 * v.getWidth()) {
+                    animator.animateToRight(v).setListener(swipeListener);
                     adapter.pop(true);
-                } else if (v.getLeft() + translationX <= -0.5 * v.getWidth()) {
-                    animator.animateToLeft(v);
+                } else if (v.getLeft() + translationX <= -0.4 * v.getWidth()) {
+                    animator.animateToLeft(v).setListener(swipeListener);
                     adapter.pop(false);
                 } else {
                     animator.setupView(v, 0);
@@ -114,7 +103,6 @@ public class StackCardView extends FrameLayout implements View.OnTouchListener {
                 animator.rotate(v);
                 return true;
         }
-
         return super.onTouchEvent(event);
     }
 
@@ -169,7 +157,6 @@ public class StackCardView extends FrameLayout implements View.OnTouchListener {
         for (int i = maxViews - 1; i >= 0; i--) {
             View view = LayoutInflater.from(getContext()).inflate(layoutId, this, false);
             view.setLayerType(View.LAYER_TYPE_HARDWARE, null);
-            view.setOnTouchListener(this);
             if (adapter != null && i < adapter.getCount()) {
                 currentViews++;
                 view = adapter.getView(i, view, this);
@@ -184,7 +171,67 @@ public class StackCardView extends FrameLayout implements View.OnTouchListener {
             addView(view);
             animator.setupView(view, i);
             requestLayout();
+            if (i == 0) {
+                view.setOnTouchListener(this);
+            } else {
+                view.setOnTouchListener(null);
+            }
         }
     }
+
+    private void updateViews() {
+        View view = getChildAt(maxViews - 1);
+        view.animate().setListener(null);
+        views.add(views.remove(0));
+        view.setOnTouchListener(null);
+        views.get(0).setOnTouchListener(this);
+
+        // Reset view properties
+        view.setRotation(0);
+        view.setTranslationX(0);
+        view.setTranslationY(0);
+        ViewCompat.setTranslationZ(view, 0);
+        view.setScaleX(1f);
+        view.setScaleY(1f);
+        view.setRotationX(0);
+        view.setRotationY(0);
+
+        removeView(view);
+        addView(view, 0);
+
+        // If the adapter now doesn't have more data for this view, hide it
+        if (adapter.getCount() < maxViews) {
+            currentViews--;
+            view.setVisibility(View.INVISIBLE);
+        } else {
+            // Bind the next position data to this view
+            adapter.getView(maxViews - 1, view, this);
+            animator.animateAdd(view);
+        }
+
+        for (int i = 0; i < maxViews - 1; i++) {
+            animator.setupView(views.get(i), i);
+        }
+    }
+
+    private DataSetObserver observer = new DataSetObserver() {
+        @Override
+        public void onChanged() {
+            onAdapterDataChanged();
+        }
+
+        @Override
+        public void onInvalidated() {
+            removeAllViews();
+            addViews();
+        }
+    };
+
+    private AnimatorListenerAdapter swipeListener = new AnimatorListenerAdapter() {
+        @Override
+        public void onAnimationEnd(Animator animation) {
+            updateViews();
+        }
+    };
 }
 

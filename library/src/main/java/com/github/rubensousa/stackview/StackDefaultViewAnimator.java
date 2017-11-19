@@ -2,6 +2,7 @@ package com.github.rubensousa.stackview;
 
 import android.support.v4.view.ViewCompat;
 import android.view.View;
+import android.view.ViewPropertyAnimator;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
 
@@ -34,16 +35,27 @@ public class StackDefaultViewAnimator implements StackViewAnimator {
     }
 
     @Override
-    public void animateToLeft(View view) {
+    public void animateAdd(View view) {
+        view.setScaleY(0f);
+        view.setTranslationX(0);
         view.animate()
+                .scaleY(1f)
+                .translationY((stackCardView.getCurrentViews() - 1) * (-verticalSpacing))
+                .setStartDelay(100)
+                .setInterpolator(new DecelerateInterpolator());
+    }
+
+    @Override
+    public ViewPropertyAnimator animateToLeft(View view) {
+        return view.animate()
                 .translationX(-view.getWidth() * 2)
                 .rotation(MAX_ROTATION)
                 .setInterpolator(new AccelerateInterpolator());
     }
 
     @Override
-    public void animateToRight(View view) {
-        view.animate()
+    public ViewPropertyAnimator animateToRight(View view) {
+        return view.animate()
                 .translationX(view.getWidth() * 2)
                 .rotation(MAX_ROTATION)
                 .setInterpolator(new AccelerateInterpolator());
