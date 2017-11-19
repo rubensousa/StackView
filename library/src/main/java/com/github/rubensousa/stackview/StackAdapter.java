@@ -55,12 +55,12 @@ public abstract class StackAdapter<T> extends BaseAdapter {
         notifyDataSetChanged();
     }
 
-    public void revertPop(T data) {
+    void revertPop(T data) {
         mData.add(0, data);
         notifyDataSetChanged();
     }
 
-    public T pop(boolean right) {
+    T pop(boolean right) {
         T data = mData.remove(0);
         notifyDataSetChanged();
         if (mListener != null) {

@@ -7,16 +7,15 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.github.rubensousa.stackview.StackAdapter;
-import com.github.rubensousa.stackview.StackCardView;
 import com.github.rubensousa.stackview.StackView;
 
 import java.util.ArrayList;
 
 
 public class MainActivity extends AppCompatActivity implements Toolbar.OnMenuItemClickListener,
-        StackAdapter.StackListener<String>, StackView.StackEventListener {
+        StackAdapter.StackListener<String> {
 
-    private StackCardView stackView;
+    private StackView stackView;
     private StringAdapter adapter;
 
     @Override
@@ -33,7 +32,14 @@ public class MainActivity extends AppCompatActivity implements Toolbar.OnMenuIte
         findViewById(R.id.fab).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                adapter.pop(true);
+                stackView.swipeRight();
+            }
+        });
+
+        findViewById(R.id.fabClear).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                stackView.swipeLeft();
             }
         });
 
@@ -69,18 +75,13 @@ public class MainActivity extends AppCompatActivity implements Toolbar.OnMenuIte
     }
 
     @Override
-    public void onStackEmpty(int lastPosition) {
-
-    }
-
-    @Override
     public void onPopLeft(String item) {
-        adapter.push(item);
+
     }
 
     @Override
     public void onPopRight(String item) {
-        adapter.push(item);
+
     }
 
     private ArrayList<String> getData() {

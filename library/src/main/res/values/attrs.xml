@@ -1,20 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <declare-styleable name="StackView">
-        <attr name="stackview_rotationRandomMagnitude" format="integer" />
-        <!-- Must be greater than 0 and less than 1 -->
-        <attr name="stackview_horizontalScalingFactor" format="float" />
-        <attr name="stackview_horizontalSpacing" format="dimension" />
-        <attr name="stackview_verticalSpacing" format="dimension" />
-        <attr name="stackview_elevationSpacing" format="dimension" />
-        <attr name="stackview_cyclicLooping" format="boolean" />
         <attr name="stackview_size" format="integer" />
         <attr name="stackview_adapterLayout" format="reference" />
-    </declare-styleable>
-
-    <declare-styleable name="StackCardView">
-        <attr name="stackcardview_size" format="integer" />
-        <attr name="stackcardview_adapterLayout" format="reference" />
     </declare-styleable>
 
     <dimen name="stackview_vertical_spacing">8dp</dimen>

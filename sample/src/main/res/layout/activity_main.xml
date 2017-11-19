@@ -22,7 +22,7 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <com.github.rubensousa.stackview.StackCardView
+    <com.github.rubensousa.stackview.StackView
         android:id="@+id/stackView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -33,14 +33,22 @@
         android:layout_marginStart="@dimen/activity_horizontal_margin"
         android:layout_marginTop="32dp"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        app:stackcardview_adapterLayout="@layout/adapter"
-        app:stackcardview_size="4" />
+        app:stackview_adapterLayout="@layout/adapter"
+        app:stackview_size="4" />
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fabClear"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|start"
+        android:layout_margin="@dimen/fab_margin"
+        android:src="@drawable/ic_fab_clear" />
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fabAdd"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom|start"
+        android:layout_gravity="bottom|center"
         android:layout_margin="@dimen/fab_margin"
         android:src="@drawable/ic_add_24dp" />
 

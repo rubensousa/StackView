@@ -13,11 +13,11 @@ public class StackDefaultViewAnimator implements StackViewAnimator {
 
     private float verticalSpacing;
     private float elevationSpacing;
-    private StackCardView stackCardView;
+    private StackView stackView;
 
-    public StackDefaultViewAnimator(StackCardView stackCardView, float verticalSpacing,
+    public StackDefaultViewAnimator(StackView stackView, float verticalSpacing,
                                     float elevationSpacing) {
-        this.stackCardView = stackCardView;
+        this.stackView = stackView;
         this.verticalSpacing = verticalSpacing;
         this.elevationSpacing = elevationSpacing;
     }
@@ -29,7 +29,7 @@ public class StackDefaultViewAnimator implements StackViewAnimator {
         view.setTranslationX(0);
         view.setTranslationY(0);
         ViewCompat.setTranslationZ(view, 0);
-        view.setScaleX((float) (1f - 0.02 * (stackCardView.getSize() - 1)));
+        view.setScaleX((float) (1f - 0.02 * (stackView.getSize() - 1)));
         view.setScaleY(1f);
         view.setRotationX(0);
         view.setRotationY(0);
@@ -38,7 +38,7 @@ public class StackDefaultViewAnimator implements StackViewAnimator {
     @Override
     public void setupView(View view, int position) {
         ViewCompat.setElevation(view, elevationSpacing);
-        ViewCompat.setTranslationZ(view, (stackCardView.getSize() - 1 - position)
+        ViewCompat.setTranslationZ(view, (stackView.getSize() - 1 - position)
                 * elevationSpacing);
         view.animate()
                 .translationY(position * (-verticalSpacing))
@@ -52,11 +52,11 @@ public class StackDefaultViewAnimator implements StackViewAnimator {
 
     @Override
     public void animateAdd(View view) {
-        view.setTranslationY((stackCardView.getSize() - 2) * (-verticalSpacing));
+        view.setTranslationY((stackView.getSize() - 2) * (-verticalSpacing));
         view.setTranslationX(0);
         view.animate()
                 .scaleY(1f)
-                .translationY((stackCardView.getSize() - 1) * (-verticalSpacing))
+                .translationY((stackView.getSize() - 1) * (-verticalSpacing))
                 .setStartDelay(300)
                 .setInterpolator(new LinearInterpolator())
                 .setListener(null);
