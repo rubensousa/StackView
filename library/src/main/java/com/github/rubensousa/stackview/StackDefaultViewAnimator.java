@@ -23,26 +23,43 @@ public class StackDefaultViewAnimator implements StackViewAnimator {
     }
 
     @Override
+    public void reset(View view) {
+        view.clearAnimation();
+        view.setRotation(0);
+        view.setTranslationX(0);
+        view.setTranslationY(0);
+        ViewCompat.setTranslationZ(view, 0);
+        view.setScaleX((float) (1f - 0.02 * (stackCardView.getSize() - 1)));
+        view.setScaleY(1f);
+        view.setRotationX(0);
+        view.setRotationY(0);
+    }
+
+    @Override
     public void setupView(View view, int position) {
         ViewCompat.setElevation(view, elevationSpacing);
-        ViewCompat.setTranslationZ(view, (stackCardView.getMaxViews() - 1 - position)
+        ViewCompat.setTranslationZ(view, (stackCardView.getSize() - 1 - position)
                 * elevationSpacing);
         view.animate()
                 .translationY(position * (-verticalSpacing))
+                .scaleX(1f - 0.02f * position)
                 .rotation(0)
+                .setStartDelay(0)
                 .translationX(0)
-                .setInterpolator(new DecelerateInterpolator());
+                .setInterpolator(new DecelerateInterpolator())
+                .setListener(null);
     }
 
     @Override
     public void animateAdd(View view) {
-        view.setScaleY(0.8f);
+        view.setTranslationY((stackCardView.getSize() - 2) * (-verticalSpacing));
         view.setTranslationX(0);
         view.animate()
                 .scaleY(1f)
-                .translationY((stackCardView.getCurrentViews() - 1) * (-verticalSpacing))
-                .setStartDelay(100)
-                .setInterpolator(new DecelerateInterpolator());
+                .translationY((stackCardView.getSize() - 1) * (-verticalSpacing))
+                .setStartDelay(300)
+                .setInterpolator(new LinearInterpolator())
+                .setListener(null);
     }
 
     @Override
@@ -50,9 +67,10 @@ public class StackDefaultViewAnimator implements StackViewAnimator {
         return view.animate()
                 .translationX(-view.getWidth())
                 .rotation(-MAX_ROTATION)
-                .translationY(view.getTranslationY()*2)
+                .translationY(view.getTranslationY() * 2)
+                .setStartDelay(0)
                 .setDuration(150)
-                .setInterpolator(new LinearInterpolator());
+                .setInterpolator(new DecelerateInterpolator());
     }
 
     @Override
@@ -60,9 +78,10 @@ public class StackDefaultViewAnimator implements StackViewAnimator {
         return view.animate()
                 .translationX(view.getWidth())
                 .rotation(MAX_ROTATION)
-                .translationY(view.getTranslationY()*2)
+                .translationY(view.getTranslationY() * 2)
+                .setStartDelay(0)
                 .setDuration(150)
-                .setInterpolator(new LinearInterpolator());
+                .setInterpolator(new DecelerateInterpolator());
     }
 
     @Override

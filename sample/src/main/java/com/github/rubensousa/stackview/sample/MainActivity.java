@@ -9,12 +9,6 @@ import android.view.View;
 import com.github.rubensousa.stackview.StackAdapter;
 import com.github.rubensousa.stackview.StackCardView;
 import com.github.rubensousa.stackview.StackView;
-import com.github.rubensousa.stackview.animator.StackDefaultAnimator;
-import com.github.rubensousa.stackview.animator.StackSlideFadeAnimator;
-import com.github.rubensousa.stackview.animator.StackFlipAnimator;
-import com.github.rubensousa.stackview.animator.StackFlipSlideAnimator;
-import com.github.rubensousa.stackview.animator.StackSlideShrinkAnimator;
-import com.github.rubensousa.stackview.animator.StackSlideAnimator;
 
 import java.util.ArrayList;
 
@@ -22,15 +16,15 @@ import java.util.ArrayList;
 public class MainActivity extends AppCompatActivity implements Toolbar.OnMenuItemClickListener,
         StackAdapter.StackListener<String>, StackView.StackEventListener {
 
-    private StackCardView mStackView;
-    private StringAdapter mAdapter;
+    private StackCardView stackView;
+    private StringAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mStackView = findViewById(R.id.stackView);
+        stackView = findViewById(R.id.stackView);
         Toolbar toolbar = findViewById(R.id.toolbar);
         toolbar.setTitle(R.string.app_name);
         toolbar.inflateMenu(R.menu.animators);
@@ -39,39 +33,39 @@ public class MainActivity extends AppCompatActivity implements Toolbar.OnMenuIte
         findViewById(R.id.fab).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mAdapter.pop(true);
+                adapter.pop(true);
             }
         });
 
         findViewById(R.id.fabAdd).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mAdapter.push(getData());
+                adapter.push(getData());
             }
         });
 
-        mAdapter = new StringAdapter();
+        adapter = new StringAdapter();
 
         if (savedInstanceState != null) {
-            mAdapter.restoreState(savedInstanceState);
+            adapter.restoreState(savedInstanceState);
         } else {
-            mAdapter.push(getData());
+            adapter.push(getData());
         }
 
-        mAdapter.setStackListener(this);
-        mStackView.setAdapter(mAdapter);
+        adapter.setStackListener(this);
+        stackView.setAdapter(adapter);
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        mAdapter.saveState(outState);
+        adapter.saveState(outState);
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        mAdapter.setStackListener(null);
+        adapter.setStackListener(null);
     }
 
     @Override
@@ -81,12 +75,12 @@ public class MainActivity extends AppCompatActivity implements Toolbar.OnMenuIte
 
     @Override
     public void onPopLeft(String item) {
-
+        adapter.push(item);
     }
 
     @Override
     public void onPopRight(String item) {
-
+        adapter.push(item);
     }
 
     private ArrayList<String> getData() {
@@ -109,22 +103,22 @@ public class MainActivity extends AppCompatActivity implements Toolbar.OnMenuIte
     public boolean onMenuItemClick(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.defaultAnim:
-                mStackView.setAnimator(new StackDefaultAnimator());
+                stackView.setAnimator(new StackDefaultAnimator());
                 return true;
             case R.id.slide:
-                mStackView.setAnimator(new StackSlideAnimator(StackSlideAnimator.MOVE_LEFT));
+                stackView.setAnimator(new StackSlideAnimator(StackSlideAnimator.MOVE_LEFT));
                 return true;
             case R.id.flip:
-                mStackView.setAnimator(new StackFlipAnimator(StackFlipAnimator.MOVE_DOWN));
+                stackView.setAnimator(new StackFlipAnimator(StackFlipAnimator.MOVE_DOWN));
                 return true;
             case R.id.flipSlide:
-                mStackView.setAnimator(new StackFlipSlideAnimator(StackFlipSlideAnimator.MOVE_UP));
+                stackView.setAnimator(new StackFlipSlideAnimator(StackFlipSlideAnimator.MOVE_UP));
                 return true;
             case R.id.fade:
-                mStackView.setAnimator(new StackSlideFadeAnimator(StackSlideFadeAnimator.MOVE_DOWN));
+                stackView.setAnimator(new StackSlideFadeAnimator(StackSlideFadeAnimator.MOVE_DOWN));
                 return true;
             case R.id.shrink:
-                mStackView.setAnimator(new StackSlideShrinkAnimator(StackSlideShrinkAnimator.MOVE_DOWN));
+                stackView.setAnimator(new StackSlideShrinkAnimator(StackSlideShrinkAnimator.MOVE_DOWN));
                 return true;
         }
         return false;

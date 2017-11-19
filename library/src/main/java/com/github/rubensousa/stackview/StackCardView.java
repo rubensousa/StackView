@@ -23,7 +23,6 @@ import android.content.res.TypedArray;
 import android.database.DataSetObserver;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -39,8 +38,8 @@ public class StackCardView extends FrameLayout implements View.OnTouchListener {
     private static final int DEFAULT_SIZE = 4;
 
     private int layoutId;
-    private int maxViews;
-    private int currentViews;
+    private int size;
+    private int visibleItems;
     private float startX;
     private float startY;
     private List<View> views;
@@ -59,9 +58,9 @@ public class StackCardView extends FrameLayout implements View.OnTouchListener {
         super(context, attrs, defStyleAttr);
         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.StackCardView, 0, 0);
         views = new ArrayList<>();
-        maxViews = a.getInt(R.styleable.StackCardView_stackcardview_size, DEFAULT_SIZE);
+        size = a.getInt(R.styleable.StackCardView_stackcardview_size, DEFAULT_SIZE);
         layoutId = a.getResourceId(R.styleable.StackCardView_stackcardview_adapterLayout, 0);
-        currentViews = 0;
+        visibleItems = 0;
         a.recycle();
         setClipToPadding(false);
         setClipChildren(false);
@@ -104,12 +103,12 @@ public class StackCardView extends FrameLayout implements View.OnTouchListener {
         return super.onTouchEvent(event);
     }
 
-    public int getCurrentViews() {
-        return currentViews;
+    public int getVisibleItems() {
+        return visibleItems;
     }
 
-    public int getMaxViews() {
-        return maxViews;
+    public int getSize() {
+        return size;
     }
 
     public void setAnimator(@NonNull StackViewAnimator animator) {
@@ -132,14 +131,14 @@ public class StackCardView extends FrameLayout implements View.OnTouchListener {
     }
 
     private void onAdapterDataChanged() {
-        int newSize = adapter.getCount() > maxViews ? maxViews : adapter.getCount();
-        if (currentViews < newSize) {
-            int itemsToAdd = newSize - currentViews;
+        int newSize = adapter.getCount() > size ? size : adapter.getCount();
+        if (visibleItems < newSize) {
+            int itemsToAdd = newSize - visibleItems;
             for (int i = 0; i < itemsToAdd; i++) {
-                int stackPosition = currentViews;
+                int stackPosition = visibleItems;
                 View view = adapter.getView(stackPosition, views.get(stackPosition), this);
                 view.setVisibility(View.VISIBLE);
-                currentViews++;
+                visibleItems++;
                 view.setTranslationX(0);
                 view.setRotation(0);
                 animator.setupView(view, stackPosition);
@@ -149,16 +148,16 @@ public class StackCardView extends FrameLayout implements View.OnTouchListener {
 
     private void addViews() {
         views.clear();
-        for (int i = 0; i < maxViews; i++) {
+        for (int i = 0; i < size; i++) {
             views.add(null);
         }
-        currentViews = 0;
+        visibleItems = 0;
         // Start adding the last views
-        for (int i = maxViews - 1; i >= 0; i--) {
+        for (int i = size - 1; i >= 0; i--) {
             View view = LayoutInflater.from(getContext()).inflate(layoutId, this, false);
             view.setLayerType(View.LAYER_TYPE_HARDWARE, null);
             if (adapter != null && i < adapter.getCount()) {
-                currentViews++;
+                visibleItems++;
                 view = adapter.getView(i, view, this);
             } else {
                 // If there's no adapter set or the adapter has less items than the current index,
@@ -180,36 +179,29 @@ public class StackCardView extends FrameLayout implements View.OnTouchListener {
     }
 
     private void updateViews() {
-        View view = getChildAt(maxViews - 1);
+        View view = getChildAt(size - 1);
         view.animate().setListener(null);
         views.add(views.remove(0));
         view.setOnTouchListener(null);
         views.get(0).setOnTouchListener(this);
 
         // Reset view properties
-        view.setRotation(0);
-        view.setTranslationX(0);
-        view.setTranslationY(0);
-        ViewCompat.setTranslationZ(view, 0);
-        view.setScaleX(1f);
-        view.setScaleY(1f);
-        view.setRotationX(0);
-        view.setRotationY(0);
+        animator.reset(view);
 
         removeView(view);
         addView(view, 0);
 
         // If the adapter now doesn't have more data for this view, hide it
-        if (adapter.getCount() < maxViews) {
-            currentViews--;
+        if (adapter.getCount() < size) {
+            visibleItems--;
             view.setVisibility(View.INVISIBLE);
         } else {
             // Bind the next position data to this view
-            adapter.getView(maxViews - 1, view, this);
+            adapter.getView(size - 1, view, this);
             animator.animateAdd(view);
         }
 
-        for (int i = 0; i < maxViews - 1; i++) {
+        for (int i = 0; i < size - 1; i++) {
             View v = views.get(i);
             v.setTranslationX(0);
             v.setRotation(0);

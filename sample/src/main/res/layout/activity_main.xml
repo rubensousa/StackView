@@ -31,10 +31,10 @@
         android:layout_marginLeft="@dimen/activity_horizontal_margin"
         android:layout_marginRight="@dimen/activity_horizontal_margin"
         android:layout_marginStart="@dimen/activity_horizontal_margin"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="32dp"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         app:stackcardview_adapterLayout="@layout/adapter"
-        app:stackcardview_size="3" />
+        app:stackcardview_size="4" />
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fabAdd"

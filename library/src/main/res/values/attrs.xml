@@ -13,16 +13,10 @@
     </declare-styleable>
 
     <declare-styleable name="StackCardView">
-        <!-- Must be greater than 0 and less than 1 -->
-        <attr name="stackcardview_horizontalScalingFactor" format="float" />
-        <attr name="stackcardview_horizontalSpacing" format="dimension" />
-        <attr name="stackcardview_verticalSpacing" format="dimension" />
-        <attr name="stackcardview_elevationSpacing" format="dimension" />
-        <attr name="stackcardview_cyclicLooping" format="boolean" />
         <attr name="stackcardview_size" format="integer" />
         <attr name="stackcardview_adapterLayout" format="reference" />
     </declare-styleable>
 
-    <dimen name="stackview_vertical_spacing">10dp</dimen>
+    <dimen name="stackview_vertical_spacing">8dp</dimen>
     <dimen name="stackview_elevation_spacing">2dp</dimen>
 </resources>

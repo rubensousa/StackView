@@ -6,6 +6,8 @@ import android.view.ViewPropertyAnimator;
 
 public interface StackViewAnimator {
 
+    void reset(View view);
+
     void setupView(View view, int position);
 
     void animateAdd(View view);
