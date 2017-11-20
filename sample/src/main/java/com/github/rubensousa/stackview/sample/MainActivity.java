@@ -6,6 +6,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 
+
 import com.github.rubensousa.stackview.StackAdapter;
 import com.github.rubensousa.stackview.StackView;
 
