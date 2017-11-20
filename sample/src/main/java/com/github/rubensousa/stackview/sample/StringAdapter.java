@@ -10,8 +10,8 @@ import com.github.rubensousa.stackview.StackAdapter;
 
 public class StringAdapter extends StackAdapter<String> {
 
-    public StringAdapter() {
-
+    public StringAdapter(OnSwipeListener<String> listener) {
+        super(listener);
     }
 
     public void saveState(Bundle savedInstanceState) {

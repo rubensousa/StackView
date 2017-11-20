@@ -42,6 +42,7 @@ public class StackView extends FrameLayout implements View.OnTouchListener {
     private int visibleItems;
     private float startX;
     private float startY;
+    private boolean swipeRight;
     private List<View> views;
     private StackAdapter adapter;
     private StackViewAnimator animator;
@@ -84,10 +85,10 @@ public class StackView extends FrameLayout implements View.OnTouchListener {
                 float translationX = v.getTranslationX();
                 if (v.getLeft() + translationX >= 0.4 * v.getWidth()) {
                     animator.animateToRight(v).setListener(swipeListener);
-                    adapter.pop(true);
+                    swipeRight = true;
                 } else if (v.getLeft() + translationX <= -0.4 * v.getWidth()) {
                     animator.animateToLeft(v).setListener(swipeListener);
-                    adapter.pop(false);
+                    swipeRight = false;
                 } else {
                     animator.setupView(v, 0);
                 }
@@ -113,8 +114,8 @@ public class StackView extends FrameLayout implements View.OnTouchListener {
 
     public boolean swipeLeft() {
         if (adapter.getCount() > 0) {
+            swipeRight = false;
             animator.animateToLeft(getCurrentView()).setListener(swipeListener);
-            adapter.pop(false);
             return true;
         } else {
             return false;
@@ -123,13 +124,43 @@ public class StackView extends FrameLayout implements View.OnTouchListener {
 
     public boolean swipeRight() {
         if (adapter.getCount() > 0) {
+            swipeRight = true;
             animator.animateToRight(getCurrentView()).setListener(swipeListener);
-            ;
-            adapter.pop(true);
             return true;
         } else {
             return false;
         }
+    }
+
+    @SuppressWarnings("unchecked")
+    public void revertSwipe(Object data, boolean right) {
+        getCurrentView().setOnTouchListener(null);
+        adapter.revertPop(data);
+
+        // Bind the first item to the last view
+        View lastView = getLastView();
+        lastView.setVisibility(View.VISIBLE);
+        lastView.setOnTouchListener(this);
+        adapter.getView(0, lastView, this);
+
+        // Make sure the view is the first child
+        views.add(0, views.remove(size - 1));
+
+        removeView(lastView);
+        addView(lastView, size - 1);
+
+        for (int i = 1; i < size; i++) {
+            View view = views.get(i);
+            animator.setupView(view, i);
+            if (i < adapter.getCount()) {
+                adapter.getView(i, view, this);
+                view.setVisibility(View.VISIBLE);
+            } else {
+                view.setVisibility(View.INVISIBLE);
+            }
+        }
+
+        animator.animateBack(lastView, right);
     }
 
     public void setAnimator(@NonNull StackViewAnimator animator) {
@@ -234,6 +265,10 @@ public class StackView extends FrameLayout implements View.OnTouchListener {
         return getChildAt(size - 1);
     }
 
+    private View getLastView() {
+        return getChildAt(0);
+    }
+
     private DataSetObserver observer = new DataSetObserver() {
         @Override
         public void onChanged() {
@@ -250,7 +285,10 @@ public class StackView extends FrameLayout implements View.OnTouchListener {
     private AnimatorListenerAdapter swipeListener = new AnimatorListenerAdapter() {
         @Override
         public void onAnimationEnd(Animator animation) {
+            Object data = adapter.pop();
             updateViews();
+            //noinspection unchecked
+            adapter.notifySwipe(data, swipeRight);
         }
     };
 }

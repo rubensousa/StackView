@@ -13,7 +13,7 @@ import java.util.ArrayList;
 
 
 public class MainActivity extends AppCompatActivity implements Toolbar.OnMenuItemClickListener,
-        StackAdapter.StackListener<String> {
+        StackAdapter.OnSwipeListener<String> {
 
     private StackView stackView;
     private StringAdapter adapter;
@@ -50,7 +50,7 @@ public class MainActivity extends AppCompatActivity implements Toolbar.OnMenuIte
             }
         });
 
-        adapter = new StringAdapter();
+        adapter = new StringAdapter(this);
 
         if (savedInstanceState != null) {
             adapter.restoreState(savedInstanceState);
@@ -58,7 +58,6 @@ public class MainActivity extends AppCompatActivity implements Toolbar.OnMenuIte
             adapter.push(getData());
         }
 
-        adapter.setStackListener(this);
         stackView.setAdapter(adapter);
     }
 
@@ -71,17 +70,17 @@ public class MainActivity extends AppCompatActivity implements Toolbar.OnMenuIte
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        adapter.setStackListener(null);
+        adapter.setOnSwipeListener(null);
     }
 
     @Override
-    public void onPopLeft(String item) {
+    public void onSwipeLeft(String item) {
 
     }
 
     @Override
-    public void onPopRight(String item) {
-
+    public void onSwipeRight(String item) {
+        stackView.revertSwipe(item, true);
     }
 
     private ArrayList<String> getData() {

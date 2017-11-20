@@ -17,24 +17,27 @@
 package com.github.rubensousa.stackview;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.widget.BaseAdapter;
 
 import java.util.ArrayList;
+import java.util.List;
 
 
 public abstract class StackAdapter<T> extends BaseAdapter {
 
     public static final String DATA_STATE = "state";
 
-    private ArrayList<T> mData;
-    private StackListener<T> mListener;
+    private ArrayList<T> list;
+    private OnSwipeListener<T> listener;
 
-    public StackAdapter() {
-        mData = new ArrayList<>();
+    public StackAdapter(@NonNull OnSwipeListener<T> listener) {
+        this.list = new ArrayList<>();
+        this.listener = listener;
     }
 
-    public void setStackListener(StackListener<T> listener) {
-        mListener = listener;
+    public void setOnSwipeListener(OnSwipeListener<T> listener) {
+        this.listener = listener;
     }
 
     public abstract void saveState(Bundle outState);
@@ -42,54 +45,53 @@ public abstract class StackAdapter<T> extends BaseAdapter {
     public abstract void restoreState(Bundle savedInstanceState);
 
     public ArrayList<T> getData() {
-        return mData;
+        return list;
     }
 
-    public void push(ArrayList<T> data) {
-        mData.addAll(data);
+    public void push(List<T> data) {
+        list.addAll(data);
         notifyDataSetChanged();
     }
 
     public void push(T data) {
-        mData.add(data);
+        list.add(data);
         notifyDataSetChanged();
     }
 
     void revertPop(T data) {
-        mData.add(0, data);
-        notifyDataSetChanged();
+        list.add(0, data);
     }
 
-    T pop(boolean right) {
-        T data = mData.remove(0);
-        notifyDataSetChanged();
-        if (mListener != null) {
-            if (right) {
-                mListener.onPopRight(data);
-            } else {
-                mListener.onPopLeft(data);
-            }
-        }
+    T pop() {
+        T data = list.remove(0);
         return data;
     }
 
+    void notifySwipe(T data, boolean right) {
+        if (right) {
+            listener.onSwipeRight(data);
+        } else {
+            listener.onSwipeLeft(data);
+        }
+    }
+
     public T getCurrentItem() {
-        return mData.get(0);
+        return list.get(0);
     }
 
     @Override
     public boolean isEmpty() {
-        return mData.isEmpty();
+        return list.isEmpty();
     }
 
     @Override
     public int getCount() {
-        return mData.size();
+        return list.size();
     }
 
     @Override
     public T getItem(int i) {
-        return mData.get(i);
+        return list.get(i);
     }
 
     @Override
@@ -97,9 +99,9 @@ public abstract class StackAdapter<T> extends BaseAdapter {
         return i;
     }
 
-    public interface StackListener<T> {
-        void onPopLeft(T item);
+    public interface OnSwipeListener<T> {
+        void onSwipeLeft(T data);
 
-        void onPopRight(T item);
+        void onSwipeRight(T data);
     }
 }

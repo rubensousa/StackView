@@ -46,6 +46,7 @@ public class StackDefaultViewAnimator implements StackViewAnimator {
                 .rotation(0)
                 .setStartDelay(0)
                 .translationX(0)
+                .setDuration(150)
                 .setInterpolator(new DecelerateInterpolator())
                 .setListener(null);
     }
@@ -88,5 +89,21 @@ public class StackDefaultViewAnimator implements StackViewAnimator {
     public void rotate(View view) {
         float rotation = view.getTranslationX() / view.getWidth() * MAX_ROTATION;
         view.setRotation(rotation);
+    }
+
+    @Override
+    public void animateBack(View view, boolean right) {
+        ViewCompat.setTranslationZ(view, (stackView.getSize() - 1) * elevationSpacing);
+        view.setScaleX(1f);
+        view.setTranslationX(right ? view.getWidth() : -view.getWidth());
+        view.setRotation(right ? MAX_ROTATION : -MAX_ROTATION);
+        view.animate()
+                .translationX(0)
+                .translationY(0)
+                .rotation(0)
+                .setStartDelay(0)
+                .setDuration(250)
+                .setInterpolator(new DecelerateInterpolator())
+                .setListener(null);
     }
 }
