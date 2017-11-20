@@ -12,6 +12,6 @@ repositories{
 }
 
 dependencies {
-  implementation 'com.github.rubensousa:stackview:1.0'
+  implementation 'com.github.rubensousa:stackview:1.0.1'
 }
 ```
