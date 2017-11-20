@@ -1,6 +1,7 @@
 package com.github.rubensousa.stackview.sample;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -8,7 +9,7 @@ import android.widget.TextView;
 import com.github.rubensousa.stackview.StackAdapter;
 
 
-public class StringAdapter extends StackAdapter<String> {
+public class StringAdapter extends StackAdapter<String> implements View.OnClickListener {
 
     public StringAdapter(OnSwipeListener<String> listener) {
         super(listener);
@@ -29,6 +30,12 @@ public class StringAdapter extends StackAdapter<String> {
     public View getView(int i, View view, ViewGroup viewGroup) {
         TextView textView = view.findViewById(R.id.textView);
         textView.setText(getItem(i));
+        view.setOnClickListener(this);
         return view;
+    }
+
+    @Override
+    public void onClick(View v) {
+        Log.d("View Clicked", "clicked");
     }
 }

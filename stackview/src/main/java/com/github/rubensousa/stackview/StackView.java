@@ -80,19 +80,22 @@ public class StackView extends FrameLayout implements View.OnTouchListener {
                 startX = event.getX();
                 startY = event.getY();
                 v.clearAnimation();
-                return true;
+                return false;
             case MotionEvent.ACTION_UP:
                 float translationX = v.getTranslationX();
                 if (v.getLeft() + translationX >= 0.4 * v.getWidth()) {
                     animator.animateToRight(v).setListener(swipeListener);
                     swipeRight = true;
+                    return true;
                 } else if (v.getLeft() + translationX <= -0.4 * v.getWidth()) {
                     animator.animateToLeft(v).setListener(swipeListener);
                     swipeRight = false;
-                } else {
+                    return true;
+                } else if (translationX != 0) {
                     animator.setupView(v, 0);
+                    return true;
                 }
-                return true;
+                return false;
             case MotionEvent.ACTION_MOVE:
                 float dx = event.getX() - startX;
                 float dy = event.getY() - startY;
@@ -101,7 +104,7 @@ public class StackView extends FrameLayout implements View.OnTouchListener {
                 animator.rotate(v);
                 return true;
         }
-        return super.onTouchEvent(event);
+        return v.onTouchEvent(event);
     }
 
     public int getVisibleItems() {
