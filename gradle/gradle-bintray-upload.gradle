@@ -16,7 +16,7 @@ bintray {
         desc = POM_DESCRIPTION
         websiteUrl = POM_URL
         vcsUrl = POM_SCM_CONNECTION
-        licenses = POM_LICENSES
+        licenses = ['Apache-2.0']
         publish = true
         publicDownloadNumbers = true
         version {
