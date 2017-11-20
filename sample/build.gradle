@@ -1,5 +1,9 @@
 apply plugin: 'com.android.application'
 
+repositories{
+    maven { url "https://dl.bintray.com/rubensousa/maven" }
+}
+
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
     buildToolsVersion rootProject.ext.buildToolsVersion
@@ -20,9 +24,9 @@ android {
 }
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation "com.android.support:design:$supportLibVersion"
     implementation "com.android.support:appcompat-v7:$supportLibVersion"
     implementation "com.android.support:cardview-v7:$supportLibVersion"
-    implementation project(':stackview')
+    implementation 'com.github.rubensousa:stackview:1.0'
+    //implementation project(':stackview')
 }
