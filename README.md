@@ -1,5 +1,5 @@
 # StackView
-A view that arranges it's children in the form of a stack.
+A view that arranges its children in the form of a stack.
 
 Available from API 16.
 
