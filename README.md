@@ -7,10 +7,6 @@ Available from API 16.
 
 - Add the following to your build.gradle:
 ```groovy
-repositories{
-  maven { url "https://dl.bintray.com/rubensousa/maven" }
-}
-
 dependencies {
   implementation 'com.github.rubensousa:stackview:1.0.1'
 }
